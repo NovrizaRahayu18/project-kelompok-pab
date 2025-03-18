@@ -33,11 +33,14 @@ app.use(AuthRoute);
 app.get("/", verifyToken, (req, res) => {
   // Redirect based on user role
   if (req.user.role === "owner") {
-   return res.redirect("/owner");
-  
+      res.redirect("/owner");
+  } else if (req.user.role === "admin") {
+      res.redirect("/admin");
   } else if (req.user.role === "supervisor") {
-    return res.redirect("/supervisor");
-  } 
+      res.redirect("/supervisor");
+  } else if (req.user.role === "petugas") {
+      res.redirect("/petugas");
+  }
 });
 
 // Login
@@ -99,50 +102,41 @@ app.get("/edit-data-user", (req, res) => {
 
 
 // // ADMIN
-// app.use("/admin", verifyToken, checkRole(["admin"]));
-// app.get("/admin", (req, res) => {res.sendFile(path.join(__dirname, "views", "admin", "index.html"));
-// });
+app.use("/admin", verifyToken, checkRole(["admin"]));
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "index.html"));
+});
 
-// // data barang
-// app.get("/data-barang", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "data-barang.html"));
-// });
-// app.get("/tambah-data-barang", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "tambah-data-barang.html")
-//   );
-// });
-// app.get("/edit-data-barang", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "edit-data-barang.html"));
-// });
+// data barang
+app.get("/data-barang", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "data-barang.html"));
+});
+app.get("/tambah-data-barang", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "tambah-data-barang.html")
+  );
+});
+app.get("/edit-data-barang", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "edit-data-barang.html"));
+});
 
-// // data barang masuk
-// app.get("/data-barang-masuk", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "data-barang-masuk.html")
-//   );
-// });
-// app.get("/edit-data-barang-masuk", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "edit-data-barang-masuk.html")
-//   );
-// });
-// app.get("/tambah-data-barang-masuk", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "tambah-data-barang-masuk.html")
-//   );
-// });
-
-// // data penjualan
-// app.get("/data-penjualan", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "data-penjualan.html"));
-// });
-// // data detail penjualan
-// app.get("/data-detail-penjualan", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "admin", "data-detail-penjualan.html")
-//   );
-// });
+// data barang masuk
+app.get("/data-barang-masuk", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "data-barang-masuk.html")
+  );
+});
+app.get("/edit-data-barang-masuk", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "edit-data-barang-masuk.html")
+  );
+});
+app.get("/tambah-data-barang-masuk", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin", "tambah-data-barang-masuk.html")
+  );
+});
 
 // Supervisor
 app.use("/supervisor", verifyToken, checkRole(["supervisor"]));
 app.get("/supervisor", (req, res) => {
-  res.sendFile(path.join(__dirname, "supervisor", "supervisor", "index.html"));
+  res.sendFile(path.join(__dirname, "views", "supervisor", "index.html"));
 });
 
 app.get("/kasir", (req, res) => {
@@ -158,27 +152,38 @@ app.get("/data-detail-penjualan", (req, res) => {
   );
 });
 
+// data user
+app.get("/data-user", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "supervisor", "data-user.html"));
+});
+app.get("/tambah-data-user", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "supervisor", "tambah-data-user.html"));
+});
+app.get("/edit-data-user", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "supervisor", "edit-data-user.html"));
+});
+
 
 
 
 // PETUGAS
-// app.use("/petugas", verifyToken, checkRole(["petugas"]));
-// app.get("/petugas", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "petugas", "index.html"));
-// });
+app.use("/petugas", verifyToken, checkRole(["petugas"]));
+app.get("/petugas", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "petugas", "index.html"));
+});
 
-// app.get("/kasir", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "petugas", "kasir.html"));
-// });
+app.get("/kasir", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "petugas", "kasir.html"));
+});
 
-// app.get("/data-penjualan", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "petugas", "data-penjualan.html"));
-// });
+app.get("/data-penjualan", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "petugas", "data-penjualan.html"));
+});
 
-// app.get("/data-detail-penjualan", (req, res) => {
-//   res.sendFile(path.join(__dirname, "views", "petugas", "data-detail-penjualan.html")
-//   );
-// });
+app.get("/data-detail-penjualan", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "petugas", "data-detail-penjualan.html")
+  );
+});
 
 app.listen(port, hostname, () => {
   console.log(`Server berjalan pada http://${hostname}:${port}`);

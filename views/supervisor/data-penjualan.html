@@ -24,6 +24,7 @@
                 <li><a href="/">Dashboard</a></li>
                 <li><a href="/supervisor/kasir.html">Kasir</a></li>
                 <li><a href="/supervisor/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="/supervisor/data-user.html">Data User</a></li>
                 <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
             </ul>
         </div>
@@ -79,6 +80,7 @@ const loadDataPenjualan = async () => {
                     <td class="kanan">${penjualan.kembalian}</td>
                     <td>
                         <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
+                        <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button>
                     </td>
                 `;
                 tableBody.appendChild(row);

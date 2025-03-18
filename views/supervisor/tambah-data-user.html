@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Foto - Tambah User</title>
-    <link rel="stylesheet" href="/admin/style/tambah-data-user.css">
+    <link rel="stylesheet" href="/owner/style/tambah-data-user.css">
     <link rel="icon" href="../images/logo.jpg" type="image/jpg">
 </head>
 <body>
@@ -20,11 +20,10 @@
             <div class="list">
                 <ul>
                     <li><a href="/">Dashboard</a></li>
-                    <li><a href="/admin/data-barang.html">Data Barang</a></li>
-                    <li><a href="/admin/data-barang-masuk.html">Data Barang</a></li>
-                    <li><a href="/admin/data-penjualan.html">Data Penjualan</a></li>
-                    <li><a href="/admin/data-user.html">Data User</a></li>
-                    <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+                <li><a href="/supervisor/kasir.html">Kasir</a></li>
+                <li><a href="/supervisor/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="/supervisor/data-user.html">Data User</a></li>
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
                 </ul>
             </div>
         </div>
@@ -48,9 +47,6 @@
                             <label for="role">Role</label>
                             <select id="role" name="role" required>
                                 <option value="petugas">Petugas</option>
-                                <option value="supervisor">Supervisor</option>
-                                <option value="admin">Admin</option>
-                                <option value="owner">Owner</option>
                             </select>
                         </div>
 
@@ -61,7 +57,7 @@
                         
                         <div class="btn-container">
                             <button type="submit" class="btn btn-save">Simpan</button>
-                            <button type="button" class="btn btn-cancel" onclick="window.location.href='/admin/data-user.html'">Batal</button>
+                            <button type="button" class="btn btn-cancel" onclick="window.location.href='/owner/data-user.html'">Batal</button>
                         </div>
                     </form>
                 </div>
@@ -87,7 +83,7 @@ document.getElementById('tambahForm').addEventListener('submit', async (e) => {
 
         if (response.ok) {
             alert('User berhasil ditambahkan');
-            window.location.href = '/admin/data-user.html';
+            window.location.href = '/owner/data-user.html';
         } else {
             const error = await response.json();
             alert(error.msg || 'Gagal menambahkan User');
