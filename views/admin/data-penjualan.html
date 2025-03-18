@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Foto - Data Penjualan</title>
+    <link rel="stylesheet" href="/admin/style/data-penjualan.css">
+    <link rel="icon" href="../images/logo.jpg" type="image/jpg">
+</head>
+<body>
+    
+<div class="container">
+
+    <div class="navigasi">
+        <div class="judul">
+            <div class="gambar">
+                <img src="../images/logo.jpg" alt="">
+            </div>
+            <h2>Family Foto</h2>
+        </div>
+        
+        <div class="list">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/admin/data-barang.html">Data Barang</a></li>
+                <li><a href="/admin/data-barang-masuk.html">Data Barang Masuk</a></li>
+                <li><a href="/admin/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="konten">
+        <div class="isi-konten">
+            <div class="con-button"><button id="printButton" class="btn print">Print Halaman</button></div>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>ID Penjualan</th>
+                        <th>Tanggal</th>
+                        <th>Total Harga</th>
+                        <th>Uang Bayar</th>
+                        <th>Kembalian</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="data_penjualan">
+                    
+                </tbody>
+            </table>
+            
+
+            
+        </div>
+    </div>
+</div>
+<script>
+
+document.getElementById('printButton').addEventListener('click', () => {
+            window.print();
+        });
+const loadDataPenjualan = async () => {
+        try {
+            const response = await fetch('/api/penjualan');
+            if (!response.ok) {
+                throw new Error('Gagal mengambil data penjualan');
+            }
+            const data = await response.json();
+            
+            const tableBody = document.getElementById('data_penjualan');
+            tableBody.innerHTML = '';
+            
+            data.forEach((penjualan, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="tengah">${penjualan.id_penjualan}</td>
+                    <td>${penjualan.tanggal_penjualan}</td>
+                    <td class="kanan">${penjualan.total_harga}</td>
+                    <td class="kanan">${penjualan.uang_bayar}</td>
+                    <td class="kanan">${penjualan.kembalian}</td>
+                    <td>
+                        <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
+                        <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Gagal memuat data penjualan');
+        }
+};
+
+    const showDetail = (id) => {
+        window.location.href = `/admin/data-detail-penjualan.html?id=${id}`;
+    };
+
+    const deletePenjualan = async (id) => {
+    if (confirm('Apakah Anda yakin ingin menghapus Data Penjualan ini?')) {
+        try {
+            const response = await fetch(`/api/penjualan/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('Penjualan berhasil dihapus');
+                loadDataPenjualan(); 
+            } else {
+                alert('Gagal menghapus penjualan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menghapus penjualan');
+        }
+    }
+};
+
+    document.addEventListener('DOMContentLoaded', loadDataPenjualan);
+
+    async function handleLogout(event) {
+    event.preventDefault();
+    
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Gagal logout. Silakan coba lagi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat logout');
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

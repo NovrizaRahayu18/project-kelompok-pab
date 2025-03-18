@@ -1,0 +1,145 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: white;
+}
+
+.container {
+    display: flex;
+}
+
+.navigasi {
+    width: 250px;
+    background-color: #FF1493;
+    position: fixed; 
+    height: 100%; 
+    overflow-y: auto; 
+}
+
+.judul {
+    width: 100%;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.gambar {
+    width: 100%;
+    text-align: center;
+}
+
+img {
+    width: 50%;
+    border-radius: 50%;
+}
+
+h2 {
+    color: white;
+}
+
+.list {
+    width: 100%;
+}
+
+ul {
+    text-align: left;
+    margin-left: 30px;
+    margin-top: 30px;
+}
+
+li {
+    margin-right: 30px;
+    border-bottom: 1px solid white;
+    padding: 20px 0;
+    list-style-type: none;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #4B4B4B;
+    transition: 0.1s;
+}
+
+.konten {
+    
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    display: flex;
+    flex-direction: column;
+    justify-content: start; /* Ubah dari center ke start */
+    min-height: 300px; /* Atur tinggi minimum */
+}
+
+
+.isi-konten {
+    background-color: #FF1493;
+    width: 95%;
+    height: 200px;
+    margin: 30px auto;
+    border-radius: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.welcome {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.isi-welcome {
+    font-size: 20px;
+}
+
+.con-card {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.con-card {
+    display: flex; 
+    justify-content: center; 
+}
+
+.card-dash {
+    background-color: white;
+    border-radius: 5px;
+    padding: 15px;
+    width: 200px;
+    box-shadow: 0px 0px 10px 8px #FF1493;
+    text-align: center;
+    margin: 0 20px;
+}
+
+.card-title h3 {
+    margin: 10px 0;
+    color: black;
+}
+
+.bulan {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 0 auto 20px;
+}
+
+.judul-bulan {
+    font-size: 30px;
+    font-weight: bold;
+} 

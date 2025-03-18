@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Foto - Detail Penjualan</title>
+    <link rel="stylesheet" href="/admin/style/data-detail-penjualan.css">
+    <link rel="icon" href="../images/logo.jpg" type="image/jpg">
+</head>
+<body>
+    
+<div class="container">
+    <div class="navigasi">
+        <div class="judul">
+            <div class="gambar">
+                <img src="../images/logo.jpg" alt="">
+            </div>
+            <h2>Family Foto</h2>
+        </div>
+        
+        <div class="list">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/admin/data-barang.html">Data Barang</a></li>
+                <li><a href="/admin/data-barang-masuk.html">Data Barang Masuk</a></li>
+                <li><a href="/admin/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="/login.html" onclick="return handleLogout()">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="konten">
+        <div class="isi-konten">
+            <h2 class="judul-detail">Detail Penjualan #<span id="id_penjualan"></span></h2>
+
+            <div class="detail-items">
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Barang</th>
+                            <th>Jumlah</th>
+                            <th>Harga Satuan</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detail_items"></tbody>
+                </table>
+            </div>
+            
+            <div class="info-penjualan">
+                <table class="info-table">
+                    <tr>
+                        <td>Tanggal</td>
+                        <td>: <span id="tanggal_penjualan"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td>: <span id="total_harga"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Bayar</td>
+                        <td>: <span id="uang_bayar"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Kembali</td>
+                        <td>: <span id="kembalian"></span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="buttons">
+                <button id="printButton" class="btn print">Print Halaman</button>
+                <button onclick="window.location.href='/admin/data-penjualan.html'" class="btn kembali">Kembali</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+document.getElementById('printButton').addEventListener('click', () => {
+            window.print();
+        });
+
+const loadDetailPenjualan = async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id_penjualan = urlParams.get('id');
+        
+        if (!id_penjualan) {
+            alert('ID Penjualan tidak ditemukan');
+            window.location.href = '/admin/data-penjualan.html';
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/detail-penjualan/${id_penjualan}`);
+            if (!response.ok) {
+                throw new Error('Data tidak ditemukan');
+            }
+            const data = await response.json();
+
+            // Update header info
+            document.getElementById('id_penjualan').textContent = data.id_penjualan;
+            document.getElementById('tanggal_penjualan').textContent = data.tanggal_penjualan;
+            document.getElementById('total_harga').textContent = data.formatted.total_harga;
+            document.getElementById('uang_bayar').textContent = data.formatted.uang_bayar;
+            document.getElementById('kembalian').textContent = data.formatted.kembalian;
+
+            // Update detail items
+            const tableBody = document.getElementById('detail_items');
+            tableBody.innerHTML = '';
+
+            data.items.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.nama_barang}</td>
+                    <td class="tengah">${item.jumlah}</td>
+                    <td class="kanan">${item.formatted.harga_satuan}</td>
+                    <td class="kanan">${item.formatted.subtotal}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Gagal memuat detail penjualan');
+            window.location.href = '/admin/data-penjualan.html';
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', loadDetailPenjualan);
+
+    async function handleLogout(event) {
+    event.preventDefault();
+    
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Gagal logout. Silakan coba lagi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat logout');
+        }
+    }
+}
+</script>
+
+</body>
+</html>

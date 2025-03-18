@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Foto - Kasir</title>
+    <link rel="stylesheet" href="/supervisor/style/kasir.css">
+    <link rel="icon" href="../images/logo.jpg" type="image/jpg">
+</head>
+<body>
+    
+<div class="container">
+    <div class="navigasi">
+        <div class="judul">
+            <div class="gambar">
+                <img class="lingkaran" src="../images/logo.jpg" alt="">
+            </div>
+            <h2>Family Foto</h2>
+        </div>
+        
+        <div class="list">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/supervisor/kasir.html">Kasir</a></li>
+                <li><a href="/supervisor/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="konten">
+        <div class="isi-konten">
+            <div class="judul-konten">
+                <p class="judul-daftar">Daftar Barang</p>
+                <p class="judul-kasir">Kasir</p>
+            </div>
+
+            <div class="con-content">
+                <div class="display">
+                    <!-- Cards disini -->
+                </div>
+
+                <div class="kasir">
+                    <div class="isi-kasir">
+                        <table class="kasir-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Barang</th>
+                                    <th>Harga</th>
+                                    <th>Jumlah</th>
+                                    <th>Subtotal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const formatRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR'
+    }).format(number);
+}
+
+const displayContainer = document.querySelector('.display');
+const kasirContainer = document.querySelector('.isi-kasir');
+
+let selectedItems = [];
+let total = 0;
+
+async function loadDataBarang() {
+    try {
+        const response = await fetch('/api/barang');
+        const data = await response.json();
+        
+        displayContainer.innerHTML = '';
+        
+        data.forEach(barang => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="img-con">
+                    <img class="img-card" src="${barang.url}" alt="${barang.nama_barang}">
+                </div>
+                <div class="card-isi">
+                    <p class="nama_barang">${barang.nama_barang}</p>
+                    <p class="harga">${formatRupiah(barang.harga_jual)}</p>
+                    <p class="stok">Stok: ${barang.stok}</p>
+                </div>
+            `;
+
+            card.addEventListener('click', () => addToKasir(barang));
+            displayContainer.appendChild(card);
+        });
+
+        updateTotal();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+function addToKasir(barang) {
+
+    if (barang.stok === 0) {
+        alert('Stok barang habis!');
+        return;
+    }
+    
+    const existingItem = selectedItems.find(item => item.id_barang === barang.id_barang);
+    
+    if (existingItem) {
+        alert('Item sudah ada di kasir');
+        return;
+    }
+
+    selectedItems.push({
+        ...barang,
+        jumlah: 1,
+        subtotal: barang.harga_jual
+    });
+
+    console.log(selectedItems);
+
+    updateKasirDisplay();
+}
+
+
+function updateKasirDisplay() {
+    const tableContent = `
+        <table class="kasir-table">
+            <thead>
+                <tr>
+                    <th>Nama Barang</th>
+                    <th>Harga</th>
+                    <th>Jumlah</th>
+                    <th>Subtotal</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${selectedItems.map((item, index) => `
+                    <tr>
+                        <td>${item.nama_barang}</td>
+                        <td>${formatRupiah(item.harga_jual)}</td>
+                        <td>
+                            <input type="number" 
+                                min="1" 
+                                max="${item.stok}" 
+                                value="${item.jumlah}" 
+                                onchange="updateJumlah(${index}, this.value)">
+                        </td>
+                        <td>${formatRupiah(item.subtotal)}</td>
+                        <td>
+                            <button onclick="removeItem(${index})">Hapus</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+
+    kasirContainer.innerHTML = tableContent;
+    updateTotal();
+}
+
+function updateJumlah(index, value) {
+    const item = selectedItems[index];
+    const jumlah = parseInt(value);
+    
+    if (jumlah > item.stok) {
+        alert('Jumlah melebihi stok yang tersedia');
+        document.querySelector('.kasir-table tbody').children[index].querySelector('input').value = item.jumlah;
+        return;
+    }
+
+    if (jumlah < 1) {
+        alert('Jumlah tidak boleh kurang dari 1 !');
+        document.querySelector('.kasir-table tbody').children[index].querySelector('input').value = item.jumlah;
+        return;
+    }
+    
+    item.jumlah = jumlah;
+    item.subtotal = item.harga_jual * jumlah;
+    
+    updateKasirDisplay();
+}
+
+function removeItem(index) {
+    selectedItems.splice(index, 1);
+    updateKasirDisplay();
+}
+
+function updateTotal() {
+    total = selectedItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+
+    let paymentSection = document.querySelector('.payment-section');
+    if (!paymentSection) {
+        paymentSection = document.createElement('div');
+        paymentSection.className = 'payment-section';
+        kasirContainer.parentElement.appendChild(paymentSection);
+    }
+    
+    paymentSection.innerHTML = `
+        <div class="payment-row">
+            <strong>Total:</strong>
+            <span>${formatRupiah(total)}</span>
+        </div>
+        <div class="payment-row">
+            <label for="uang_bayar">Uang Bayar:</label>
+            <input type="number" id="uang_bayar" onchange="hitungKembalian(this.value)">
+        </div>
+        <button class="btn-selesai" onclick="savePenjualan()">Selesai</button>
+        <div class="payment-row kembalian-row">
+            <span>Kembalian:</span>
+            <span class="kembalian">-</span>
+        </div>
+    `;
+}
+
+function hitungKembalian(uangBayar) {
+    const kembalian = uangBayar - total;
+    const kembalianElement = document.querySelector('.kembalian');
+    
+    if (kembalian < 0) {
+        kembalianElement.textContent = 'Uang bayar kurang';
+        kembalianElement.style.color = 'red';
+    } else {
+        kembalianElement.textContent = formatRupiah(kembalian);
+        kembalianElement.style.color = 'black';
+    }
+}
+
+
+async function savePenjualan() {
+
+    if (selectedItems.length === 0) {
+        alert('Pilih barang terlebih dahulu!');
+        return;
+    }
+
+    const uangBayar = document.getElementById('uang_bayar').value;
+    if (!uangBayar) {
+        alert('Masukkan uang bayar terlebih dahulu!');
+        return;
+    }
+
+    const kembalian = uangBayar - total;
+    if (kembalian < 0) {
+        alert('Uang bayar kurang!');
+        return;
+    }
+
+    
+
+    const data = {
+        tanggal_penjualan: new Date().toISOString(),
+        total_harga: total,
+        uang_bayar: parseFloat(uangBayar),
+        kembalian: kembalian,
+        items: selectedItems.map(item => ({
+            id_barang: item.id_barang,
+            jumlah: item.jumlah,
+            harga_satuan: item.harga_jual,
+            subtotal: item.harga_jual * item.jumlah
+        }))
+    };
+
+    try {
+        const response = await fetch('/api/penjualan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert('Transaksi berhasil disimpan!');
+            window.location.reload();
+        } else {
+            throw new Error(result.msg || 'Terjadi kesalahan');
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+function resetKasir() {
+    selectedItems = [];
+    total = 0;
+    kasirContainer.innerHTML = '<div class="empty-kasir">Belum ada item yang dipilih</div>';
+    
+    const paymentSection = document.querySelector('.payment-section');
+    if (paymentSection) {
+        paymentSection.remove();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadDataBarang);
+
+async function handleLogout(event) {
+    event.preventDefault();
+    
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Gagal logout. Silakan coba lagi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat logout');
+        }
+    }
+}
+</script>
+
+</body>
+</html>

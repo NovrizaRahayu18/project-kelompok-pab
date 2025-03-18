@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Foto - Data Barang Masuk</title>
+    <link rel="stylesheet" href="/owner/style/data-barang-masuk.css">
+    <link rel="icon" href="../images/logo.jpg" type="image/jpg">
+</head>
+<body>
+    
+<div class="container">
+
+    <div class="navigasi">
+        <div class="judul">
+            <div class="gambar">
+                <img src="../images/logo.jpg" alt="">
+            </div>
+            <h2>Family Foto</h2>
+        </div>
+        
+        <div class="list">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/owner/data-barang.html">Data Barang</a></li>
+                <li><a href="/owner/data-barang-masuk.html">Data Barang Masuk</a></li>
+                <li><a href="/owner/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="/owner/data-user.html">Data User</a></li>
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="konten">
+        <div class="isi-konten">
+            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/owner/tambah-data-barang-masuk.html'"> + Tambah</button></div>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>ID Barang Masuk</th>
+                        <th>ID Barang</th>
+                        <th>Tanggal Masuk</th>
+                        <th>Stok</th>
+                        <th>Keterangan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="data_barang_masuk">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Function to format date
+const formatDate = (dateString) => {
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        // timeZone: 'Asia/Jakarta'
+    };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+};
+
+const loadDataBarangMasuk = async () => {
+    try {
+        const response = await fetch('/api/barang-masuk');
+        const data = await response.json();
+        
+        const tableBody = document.getElementById('data_barang_masuk');
+        tableBody.innerHTML = '';
+        
+        data.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="tengah">${item.id_barang_masuk}</td>
+                <td>${item.id_barang} - ${item.barang.nama_barang}</td>
+                <td>${formatDate(item.tanggal_masuk)}</td>
+                <td class="tengah">${item.jumlah}</td>
+                <td>${item.keterangan || '-'}</td>
+                <td>
+                    <button class="btn edit" onclick="editBarangMasuk(${item.id_barang_masuk})">Edit</button>
+                    <button class="btn delete" onclick="deleteBarangMasuk(${item.id_barang_masuk})">Hapus</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+const deleteBarangMasuk = async (id) => {
+    if (confirm('Apakah Anda yakin ingin menghapus data ini? Stok barang akan berkurang sesuai jumlah barang masuk.')) {
+        try {
+            const response = await fetch(`/api/barang-masuk/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('Data barang masuk berhasil dihapus');
+                loadDataBarangMasuk(); 
+            } else {
+                const error = await response.json();
+                alert(error.msg || 'Gagal menghapus data');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menghapus data');
+        }
+    }
+};
+
+const editBarangMasuk = (id) => {
+    window.location.href = `/owner/edit-data-barang-masuk.html?id=${id}`;
+};
+
+document.querySelector('.btn.tambah').addEventListener('click', () => {
+    window.location.href = '/owner/tambah-data-barang-masuk.html';
+});
+
+document.addEventListener('DOMContentLoaded', loadDataBarangMasuk);
+
+async function handleLogout(event) {
+    event.preventDefault();
+    
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Gagal logout. Silakan coba lagi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat logout');
+        }
+    }
+}
+
+</script>
+
+</body>
+</html>

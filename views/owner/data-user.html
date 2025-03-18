@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Foto - Data User</title>
+    <link rel="stylesheet" href="/owner/style/data-user.css">
+    <link rel="icon" href="../images/logo.jpg" type="image/jpg">
+    <style>
+        
+    </style>
+</head>
+<body>
+    
+<div class="container">
+
+    <div class="navigasi">
+        <div class="judul">
+            <div class="gambar">
+                <img src="../images/logo.jpg" alt="">
+            </div>
+            <h2>Family Foto</h2>
+        </div>
+        
+        <div class="list">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/owner/data-barang.html">Data Barang</a></li>
+                <li><a href="/owner/data-barang-masuk.html">Data Barang Masuk</a></li>
+                <li><a href="/owner/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="/owner/data-user.html">Data User</a></li>
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="konten">
+        <div class="isi-konten">
+            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/owner/tambah-user.html'"> + Tambah</button></div>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>ID User</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Role</th>
+                        <th>Nama Lengkap</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="data_user">
+                    
+                </tbody>
+            </table>
+            
+            
+        </div>
+    </div>
+</div>
+<script>
+
+const loadDataUser = async () => {
+    try {
+        const response = await fetch('/api/user');
+        const data = await response.json();
+        
+        const tableBody = document.getElementById('data_user');
+        tableBody.innerHTML = ''; // Clear existing data
+        
+        data.forEach((user, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="tengah">${user.id_user}</td>
+                <td>${user.username}</td>
+                <td>${user.password.length > 6 ? user.password.slice(0, Math.ceil(user.password.length / 2)) + '...' : user.password}</td>
+                <td>${user.role}</td>
+                <td class="tengah">${user.nama_lengkap}</td>
+                <td>
+                    <button class="btn edit" onclick="editUser(${user.id_user})">Edit</button>
+                    <button class="btn delete" onclick="deleteUser(${user.id_user})">Hapus</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+// Function to handle delete
+const deleteUser = async (id) => {
+    if (confirm('Apakah Anda yakin ingin menghapus User ini?')) {
+        try {
+            const response = await fetch(`/api/user/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('User berhasil dihapus');
+                loadDataUser(); // Reload the table
+            } else {
+                alert('Gagal menghapus User');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menghapus User');
+        }
+    }
+};
+
+
+const editUser = (id) => {
+    window.location.href = `/owner/edit-data-user.html?id=${id}`;
+};
+
+
+document.querySelector('.btn.tambah').addEventListener('click', () => {
+    window.location.href = '/owner/tambah-data-user.html';
+});
+
+document.addEventListener('DOMContentLoaded', loadDataUser);
+
+async function handleLogout(event) {
+    event.preventDefault();
+    
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Gagal logout. Silakan coba lagi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat logout');
+        }
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Foto - Tambah Barang Masuk</title>
+    <link rel="stylesheet" href="/admin/style/edit-data-barang-masuk.css">
+    <link rel="icon" href="../images/logo.jpg" type="image/jpg">
+</head>
+<body>
+    <div class="container">
+        <div class="navigasi">
+            <div class="judul">
+                <div class="gambar">
+                    <img class="lingkaran" src="../images/logo.jpg" alt="">
+                </div>
+                <h2>Family Foto</h2>
+            </div>
+            
+            <div class="list">
+                <ul>
+                    <li><a href="/">Dashboard</a></li>
+                    <li><a href="/admin/data-barang.html">Data Barang</a></li>
+                    <li><a href="/admin/data-barang-masuk.html">Data Barang Masuk</a></li>
+                    <li><a href="/admin/data-penjualan.html">Data Penjualan</a></li>
+                    <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="konten">
+            <div class="isi-konten">
+                <div class="form-container">
+                    <h2 class="edit-title">Edit Barang Masuk</h2>
+                    <form id="editForm">
+                        <!-- <div class="form-group">
+                            <label for="id_barang">ID Barang</label>
+                            <input type="text" id="id_barang" name="id_barang" readonly>
+                        </div> -->
+                
+                        <div class="form-group">
+                            <label for="nama_barang">Nama Barang</label>
+                            <input type="text" id="nama_barang" name="nama_barang" readonly>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="tanggal_masuk">Tanggal Masuk</label>
+                            <input type="date" id="tanggal_masuk" name="tanggal_masuk" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="stok">Stok</label>
+                            <input type="number" id="stok" name="stok" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="keterangan">Keterangan</label>
+                            <input type="text" id="keterangan" name="keterangan" required>
+                        </div>
+                        
+                        <div class="btn-container">
+                            <button type="submit" class="btn btn-save">Update</button>
+                            <button type="button" class="btn btn-cancel" onclick="window.location.href='/admin/data-barang-masuk.html'">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get('id');
+
+// Fetch existing barang masuk data
+async function getBarangMasukById() {
+    try {
+        const response = await fetch(`/api/barang-masuk/${id}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        
+        // document.getElementById('id_barang').value = data.id_barang;
+        // document.getElementById('id_barang').disabled = true; 
+        document.getElementById('nama_barang').value = data.barang.nama_barang;
+        document.getElementById('nama_barang').disabled = true; 
+        document.getElementById('stok').value = data.jumlah;
+        document.getElementById('tanggal_masuk').value = formatDate(data.tanggal_masuk);
+        document.getElementById('keterangan').value = data.keterangan;
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Gagal mengambil data barang masuk');
+    }
+}
+
+// Format date to YYYY-MM-DD
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', async () => {
+    if (id) {
+        await getBarangMasukById();
+    }
+});
+
+// Handle form submission
+document.getElementById('editForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        jumlah: parseInt(document.getElementById('stok').value),
+        tanggal_masuk: document.getElementById('tanggal_masuk').value,
+        keterangan: document.getElementById('keterangan').value
+    };
+    
+    if(formData.jumlah <= 0) {
+        alert('Jumlah tidak boleh kurang dari 0!');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/barang-masuk/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('Barang masuk berhasil diupdate');
+            window.location.href = '/admin/data-barang-masuk.html';
+        } else {
+            alert(data.msg || 'Gagal mengupdate barang masuk');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengupdate barang masuk');
+    }
+});
+
+async function handleLogout(event) {
+    event.preventDefault();
+    
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Gagal logout. Silakan coba lagi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat logout');
+        }
+    }
+}
+</script>
+</body>
+</html>

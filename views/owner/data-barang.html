@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Foto - Data Barang</title>
+    <link rel="stylesheet" href="/owner/style/data-barang.css">
+    <link rel="icon" href="../images/logo.jpg" type="image/jpg">
+</head>
+<body>
+    
+<div class="container">
+
+    <div class="navigasi">
+        <div class="judul">
+            <div class="gambar">
+                <img src="../images/logo.jpg" alt="">
+            </div>
+            <h2>Family Foto</h2>
+        </div>
+        
+        <div class="list">
+            <ul>
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/owner/data-barang.html">Data Barang</a></li>
+                <li><a href="/owner/data-barang-masuk.html">Data Barang Masuk</a></li>
+                <li><a href="/owner/data-penjualan.html">Data Penjualan</a></li>
+                <li><a href="/owner/data-user.html">Data User</a></li>
+                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="konten">
+        <div class="isi-konten">
+            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/owner/tambah-barang.html'"> + Tambah</button></div>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>ID Barang</th>
+                        <th>Nama Barang</th>
+                        <th>Gambar</th>
+                        <th>Harga Beli</th>
+                        <th>Harga Jual</th>
+                        <th>Stok</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="data_barang">
+                    
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+<script>
+
+    
+const formatRupiah = (number) => {
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR'
+    }).format(number);
+}
+
+const loadDataBarang = async () => {
+    try {
+        const response = await fetch('/api/barang');
+        const data = await response.json();
+        
+        const tableBody = document.getElementById('data_barang');
+        tableBody.innerHTML = ''; 
+        
+        data.forEach((barang, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="tengah">${barang.id_barang}</td>
+                <td>${barang.nama_barang}</td>
+                <td class="tengah">
+                    <img src="${barang.url}" alt="${barang.nama_barang}" class="gambar-barang">
+                </td>   
+                <td>${formatRupiah(barang.harga_beli)}</td>
+                <td>${formatRupiah(barang.harga_jual)}</td>
+                <td class="tengah">${barang.stok}</td>
+                <td>
+                    <button class="btn edit" onclick="editBarang(${barang.id_barang})">Edit</button>
+                    <button class="btn delete" onclick="deleteBarang(${barang.id_barang})">Hapus</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+const deleteBarang = async (id) => {
+    if (confirm('Apakah Anda yakin ingin menghapus barang ini?')) {
+        try {
+
+            const cekPenjualan = await fetch(`/api/barang/check-penjualan/${id}`);
+            const penjualanData = await cekPenjualan.json();
+
+            if (penjualanData.inSales) {
+                alert('Barang tidak dapat dihapus karena digunakan dalam transaksi penjualan.');
+                return;
+            }
+
+            const response = await fetch(`/api/barang/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('Barang berhasil dihapus');
+                loadDataBarang(); 
+            } else {
+                alert('Gagal menghapus barang');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat menghapus barang');
+        }
+    }
+};
+
+const editBarang = (id) => {
+    window.location.href = `/owner/edit-data-barang.html?id=${id}`;
+};
+
+document.querySelector('.btn.tambah').addEventListener('click', () => {
+    window.location.href = '/owner/tambah-data-barang.html';
+});
+
+document.addEventListener('DOMContentLoaded', loadDataBarang);
+
+async function handleLogout(event) {
+    event.preventDefault();
+    
+    if (confirm("Apakah Anda yakin ingin logout?")) {
+        try {
+            const response = await fetch('/api/logout', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                window.location.href = '/login';
+            } else {
+                alert('Gagal logout. Silakan coba lagi.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat logout');
+        }
+    }
+}
+</script>
+
+</body>
+</html>
