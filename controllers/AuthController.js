@@ -48,8 +48,8 @@ export const login = async (req, res) => {
 
         if (user.role === 'owner') {
             res.json({ redirect: '/owner' });
-        } else if (user.role === "admin") {
-          res.json({ redirect: "/admin" });
+        } else if (user.role === "admin persediaan") {
+          res.json({ redirect: "/admin-persediaan" });
         } else if (user.role === 'supervisor') {
             res.json({ redirect: '/supervisor' });
         } else {

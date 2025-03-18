@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Foto - Data Barang Masuk</title>
-    <link rel="stylesheet" href="/admin/style/data-barang-masuk.css">
+    <link rel="stylesheet" href="/admin-persediaan/style/data-barang-masuk.css">
     <link rel="icon" href="../images/logo.jpg" type="image/jpg">
 </head>
 <body>
@@ -22,8 +22,8 @@
         <div class="list">
             <ul>
                 <li><a href="/">Dashboard</a></li>
-                <li><a href="/admin/data-barang.html">Data Barang</a></li>
-                <li><a href="/admin/data-barang-masuk.html">Data Barang Masuk</a></li>
+                <li><a href="/admin-persediaan/data-barang.html">Data Barang</a></li>
+                <li><a href="/admin-persediaan/data-barang-masuk.html">Data Barang Masuk</a></li>
                 <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
             </ul>
         </div>
@@ -31,7 +31,7 @@
 
     <div class="konten">
         <div class="isi-konten">
-            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/admin/tambah-data-barang-masuk.html'"> + Tambah</button></div>
+            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/admin-persediaan-persediaan/tambah-data-barang-masuk.html'"> + Tambah</button></div>
             <table border="1">
                 <thead>
                     <tr>
@@ -115,11 +115,11 @@ const deleteBarangMasuk = async (id) => {
 };
 
 const editBarangMasuk = (id) => {
-    window.location.href = `/admin/edit-data-barang-masuk.html?id=${id}`;
+    window.location.href = `/admin-persediaan/edit-data-barang-masuk.html?id=${id}`;
 };
 
 document.querySelector('.btn.tambah').addEventListener('click', () => {
-    window.location.href = '/admin/tambah-data-barang-masuk.html';
+    window.location.href = '/admin-persediaan/tambah-data-barang-masuk.html';
 });
 
 document.addEventListener('DOMContentLoaded', loadDataBarangMasuk);

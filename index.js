@@ -34,8 +34,8 @@ app.get("/", verifyToken, (req, res) => {
   // Redirect based on user role
   if (req.user.role === "owner") {
       res.redirect("/owner");
-  } else if (req.user.role === "admin") {
-      res.redirect("/admin");
+  } else if (req.user.role === "admin persediaan") {
+      res.redirect("/admin-persediaan");
   } else if (req.user.role === "supervisor") {
       res.redirect("/supervisor");
   } else if (req.user.role === "petugas") {
@@ -102,36 +102,38 @@ app.get("/edit-data-user", (req, res) => {
 
 
 // // ADMIN
-app.use("/admin", verifyToken, checkRole(["admin"]));
-app.get("/admin", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin", "index.html"));
+app.use("/admin-persediaan", verifyToken, checkRole(["admin persediaan"]));
+app.get("/admin-persediaan", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin-persediaan", "index.html"));
 });
 
 // data barang
 app.get("/data-barang", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin", "data-barang.html"));
+  res.sendFile(path.join(__dirname, "views", "admin-persediaan", "data-barang.html"));
 });
 app.get("/tambah-data-barang", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin", "tambah-data-barang.html")
+  res.sendFile(path.join(__dirname, "views", "admin-persediaan", "tambah-data-barang.html")
   );
 });
 app.get("/edit-data-barang", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin", "edit-data-barang.html"));
+  res.sendFile(path.join(__dirname, "views", "admin-persediaan", "edit-data-barang.html"));
 });
 
 // data barang masuk
 app.get("/data-barang-masuk", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin", "data-barang-masuk.html")
+  res.sendFile(path.join(__dirname, "views", "admin-persediaan", "data-barang-masuk.html")
   );
 });
 app.get("/edit-data-barang-masuk", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin", "edit-data-barang-masuk.html")
+  res.sendFile(path.join(__dirname, "views", "admin-persediaan", "edit-data-barang-masuk.html")
   );
 });
 app.get("/tambah-data-barang-masuk", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin", "tambah-data-barang-masuk.html")
+  res.sendFile(path.join(__dirname, "views", "admin-persediaan", "tambah-data-barang-masuk.html")
   );
 });
+
+
 
 // Supervisor
 app.use("/supervisor", verifyToken, checkRole(["supervisor"]));

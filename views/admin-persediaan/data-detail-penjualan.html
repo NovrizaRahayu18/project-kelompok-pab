@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Foto - Detail Penjualan</title>
-    <link rel="stylesheet" href="/admin/style/data-detail-penjualan.css">
+    <link rel="stylesheet" href="/admin-persediaan/style/data-detail-penjualan.css">
     <link rel="icon" href="../images/logo.jpg" type="image/jpg">
 </head>
 <body>
@@ -21,8 +21,8 @@
         <div class="list">
             <ul>
                 <li><a href="/">Dashboard</a></li>
-                <li><a href="/admin/data-barang.html">Data Barang</a></li>
-                <li><a href="/admin/data-barang-masuk.html">Data Barang Masuk</a></li>
+                <li><a href="/admin-persediaan/data-barang.html">Data Barang</a></li>
+                <li><a href="/admin-persediaan/data-barang-masuk.html">Data Barang Masuk</a></li>
                 <li><a href="/login.html" onclick="return handleLogout()">Logout</a></li>
             </ul>
         </div>
@@ -70,7 +70,7 @@
 
             <div class="buttons">
                 <button id="printButton" class="btn print">Print Halaman</button>
-                <button onclick="window.location.href='/admin/data-penjualan.html'" class="btn kembali">Kembali</button>
+                <button onclick="window.location.href='/admin-persediaan/data-penjualan.html'" class="btn kembali">Kembali</button>
             </div>
 
         </div>
@@ -89,7 +89,7 @@ const loadDetailPenjualan = async () => {
         
         if (!id_penjualan) {
             alert('ID Penjualan tidak ditemukan');
-            window.location.href = '/admin/data-penjualan.html';
+            window.location.href = '/admin-persediaan/data-penjualan.html';
             return;
         }
 
@@ -126,7 +126,7 @@ const loadDetailPenjualan = async () => {
         } catch (error) {
             console.error('Error:', error);
             alert('Gagal memuat detail penjualan');
-            window.location.href = '/admin/data-penjualan.html';
+            window.location.href = '/admin-persediaan/data-penjualan.html';
         }
     };
 

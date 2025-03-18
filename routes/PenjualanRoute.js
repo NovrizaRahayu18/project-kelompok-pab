@@ -32,12 +32,12 @@ router.post("/api/penjualan", verifyToken,
 
 // Cek barang sudah dipakai di penjualan
 router.get('/api/barang/check-penjualan/:id', verifyToken, 
-    checkRole(['owner', 'petugas', 'supervisor']), checkBarangInSales);
+    checkRole(['owner', 'petugas', 'supervisor', 'admin persediaan']), checkBarangInSales);
 
 router.get('/api/dashboard-stats', verifyToken, 
     checkRole(['owner','petugas', 'supervisor']), getDashboardStats);
 
 // Route untuk delete penjualan
-router.delete('/api/penjualan/:id', verifyToken, checkRole(['owner','admin','supervisor']), deletePenjualan);
+router.delete('/api/penjualan/:id', verifyToken, checkRole(['owner','supervisor']), deletePenjualan);
 
 export default router;
