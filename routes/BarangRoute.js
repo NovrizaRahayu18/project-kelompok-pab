@@ -11,10 +11,10 @@ import {
 
 const router = express.Router();
 
-router.get("/api/barang", verifyToken, checkRole(['owner','supervisor','petugas']), getBarang);
-router.get("/api/barang/:id", verifyToken, checkRole(['owner','supervisor','petugas']), getBarangById);
-router.post("/api/barang", verifyToken, checkRole(['owner','supervisor']), createBarang);
-router.put("/api/barang/:id", verifyToken, checkRole(['owner','supervisor','petugas']), updateBarang);
-router.delete("/api/barang/:id", verifyToken, checkRole(['owner','supervisor']), deleteBarang);
+router.get("/api/barang", verifyToken, checkRole(['owner','supervisor','admin', 'petugas']), getBarang);
+router.get("/api/barang/:id", verifyToken, checkRole(['owner','supervisor', 'admin', 'petugas']), getBarangById);
+router.post("/api/barang", verifyToken, checkRole(['owner','admin']), createBarang);
+router.put("/api/barang/:id", verifyToken, checkRole(['owner','supervisor','admin','petugas']), updateBarang);
+router.delete("/api/barang/:id", verifyToken, checkRole(['owner','admin']), deleteBarang);
 
 export default router;
