@@ -29,7 +29,7 @@ export const getBarang = async (req, res) => {
     console.log(error.message);
     res.status(500).json({ msg: "Server Error" });
   }
-};
+}
 
 export const getBarangById = async(req, res) => {
     try {
