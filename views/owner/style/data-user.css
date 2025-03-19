@@ -146,7 +146,8 @@ td:first-child {
 }
 
 .edit {
-    background-color: #00BFFF; 
+    background-color: #00BFFF;
+    width: 60px; 
 }
 
 .delete {

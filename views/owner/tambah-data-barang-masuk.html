@@ -75,7 +75,7 @@ async function getBarang() {
         const select = document.getElementById('id_barang');
         select.innerHTML = '<option value="">Pilih Barang</option>';
         
-        data.forEach(barang => {
+        data.result.forEach(barang => {
             const option = document.createElement('option');
             option.value = barang.id_barang;
             option.textContent = barang.nama_barang;
