@@ -53,6 +53,10 @@
                     
                 </tbody>
             </table>
+
+            <div id="pagination" class="pagination">
+            <!-- Pagination controls akan dirender oleh JavaScript -->
+            </div>
             
             
         </div>
@@ -60,15 +64,21 @@
 </div>
 <script>
 
-const loadDataUser = async () => {
+let currentPage = 0;
+let totalPages = 0;
+
+const loadDataUser = async (page = 0) => {
     try {
-        const response = await fetch('/api/user');
+        const response = await fetch(`/api/user?page=${page}&limit=9`);
         const data = await response.json();
+
+        totalPages = data.totalPages;
+        currentPage = data.page;
         
         const tableBody = document.getElementById('data_user');
-        tableBody.innerHTML = ''; // Clear existing data
+        tableBody.innerHTML = ''; 
         
-        data.forEach((user, index) => {
+        data.result.forEach((user, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${index + 1}</td>
@@ -84,9 +94,30 @@ const loadDataUser = async () => {
             `;
             tableBody.appendChild(row);
         });
+
+        updatePagination();
+        console.log("totalPages:", totalPages);
+        console.log("currentPage:", currentPage);
     } catch (error) {
         console.error('Error:', error);
     }
+};
+
+const updatePagination = () => {
+    const paginationElement = document.getElementById('pagination');
+    
+    let paginationHTML = `
+        <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
+        <span>Page ${currentPage + 1} of ${totalPages}</span>
+        <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
+    `;
+    
+    paginationElement.innerHTML = paginationHTML;
+};
+
+const changePage = (page) => {
+    if (page < 0 || page >= totalPages) return;
+    loadDataUser(page);
 };
 
 // Function to handle delete
