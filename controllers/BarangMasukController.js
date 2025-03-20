@@ -5,16 +5,33 @@ import moment from 'moment';
 
 export const getBarangMasuk = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 0;
+        const limit = parseInt(req.query.limit) || 9;
+        const offset = limit * page;
+        const totalRows = await BarangMasuk.count();
+        const totalPages = Math.ceil(totalRows / limit);
+
         const response = await BarangMasuk.findAll({
             include: [{
                 model: Barang,
                 as: 'barang',
                 attributes: ['nama_barang']
-            }]
+            }],
+            offset: offset,
+            limit: limit,
+            order: [["id_barang_masuk", "ASC"]]
         });
-        res.json(response);
+
+        res.json({
+          result: response,
+          page: page,
+          limit: limit,
+          totalRows: totalRows,
+          totalPages: totalPages,
+        });
     } catch (error) {
-        res.status(500).json({ msg: error.message });
+        console.log(error.message);
+        res.status(500).json({ msg: "Server Error" });
     }
 }
 

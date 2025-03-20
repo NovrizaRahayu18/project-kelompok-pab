@@ -81,7 +81,7 @@ async function loadDataBarang() {
         
         displayContainer.innerHTML = '';
         
-        data.forEach(barang => {
+        data.result.forEach(barang => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `

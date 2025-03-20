@@ -7,31 +7,55 @@ import { Op } from "sequelize";
 
 
 export const getPenjualan = async (req, res) => {
-    try {
-        const response = await Penjualan.findAll({
-            attributes: [
-                'id_penjualan',
-                'tanggal_penjualan',
-                'total_harga',
-                'uang_bayar',
-                'kembalian'
-            ],
-            order: [['tanggal_penjualan', 'DESC']]
-        });
+  try {
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const offset = limit * page;
+    const totalRows = await Penjualan.count();
+    const totalPages = Math.ceil(totalRows / limit);
 
-        const formattedResponse = response.map(item => ({
-            id_penjualan: item.id_penjualan,
-            tanggal_penjualan: moment(item.tanggal_penjualan).format('DD-MM-YYYY'),
-            total_harga: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.total_harga),
-            uang_bayar: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.uang_bayar),
-            kembalian: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.kembalian)
-        }));
+    const response = await Penjualan.findAll({
+      attributes: [
+        "id_penjualan",
+        "tanggal_penjualan",
+        "total_harga",
+        "uang_bayar",
+        "kembalian",
+      ],
+      offset: offset,
+      limit: limit,
+      order: [["id_penjualan", "ASC"]],
+    });
 
-        res.status(200).json(formattedResponse);
-    } catch (error) {
-        res.status(500).json({ msg: error.message });
-    }
-}
+    const formattedResponse = response.map((item) => ({
+      id_penjualan: item.id_penjualan,
+      tanggal_penjualan: moment(item.tanggal_penjualan).format("DD-MM-YYYY"),
+      total_harga: new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+      }).format(item.total_harga),
+      uang_bayar: new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+      }).format(item.uang_bayar),
+      kembalian: new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+      }).format(item.kembalian),
+    }));
+
+    res.status(200).json({
+      result: formattedResponse,
+      page: page,
+      limit: limit,
+      totalRows: totalRows,
+      totalPages: totalPages,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: "Server Error" });
+  }
+};
 
 // Get detail penjualan berdasarkan id_penjualan
 export const getDetailPenjualanById = async (req, res) => {

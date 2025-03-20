@@ -50,6 +50,10 @@
                     
                 </tbody>
             </table>
+
+            <div id="pagination" class="pagination">
+            <!-- Pagination controls akan dirender oleh JavaScript -->
+            </div>
             
 
             
@@ -61,21 +65,28 @@
 document.getElementById('printButton').addEventListener('click', () => {
             window.print();
         });
-const loadDataPenjualan = async () => {
+
+let currentPage = 0;
+let totalPages = 0;
+
+const loadDataPenjualan = async (page = 0) => {
         try {
-            const response = await fetch('/api/penjualan');
+            const response = await fetch(`/api/penjualan?page=${page}&limit=9`);
             if (!response.ok) {
                 throw new Error('Gagal mengambil data penjualan');
             }
             const data = await response.json();
+
+            totalPages = data.totalPages;
+            currentPage = data.page;
             
             const tableBody = document.getElementById('data_penjualan');
             tableBody.innerHTML = '';
             
-            data.forEach((penjualan, index) => {
+            data.result.forEach((penjualan, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td>${(currentPage * 9) + index + 1}</td>
                     <td class="tengah">${penjualan.id_penjualan}</td>
                     <td>${penjualan.tanggal_penjualan}</td>
                     <td class="kanan">${penjualan.total_harga}</td>
@@ -88,10 +99,29 @@ const loadDataPenjualan = async () => {
                 `;
                 tableBody.appendChild(row);
             });
+
+            updatePagination();
         } catch (error) {
             console.error('Error:', error);
             alert('Gagal memuat data penjualan');
         }
+};
+
+const updatePagination = () => {
+    const paginationElement = document.getElementById('pagination');
+    
+    let paginationHTML = `
+        <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
+        <span>Page ${currentPage + 1} of ${totalPages}</span>
+        <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
+    `;
+    
+    paginationElement.innerHTML = paginationHTML;
+};
+
+const changePage = (page) => {
+    if (page < 0 || page >= totalPages) return;
+    loadDataPenjualan(page);
 };
 
     const showDetail = (id) => {

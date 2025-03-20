@@ -22,12 +22,12 @@ router.get('/api/penjualan/:id', verifyToken,
 
 // Ini untuk detail penjualan
 router.get("/api/detail-penjualan/:id", verifyToken,
-  checkRole([("owner","petugas", "supervisor")]),getDetailPenjualanById
+  checkRole(["owner","petugas", "supervisor"]),getDetailPenjualanById
 );
 
 // Route untuk membuat penjualan baru
 router.post("/api/penjualan", verifyToken,
-  checkRole([("owner", "petugas", "supervisor")]), createPenjualan
+  checkRole(["owner", "petugas", "supervisor"]), createPenjualan
 );
 
 // Cek barang sudah dipakai di penjualan

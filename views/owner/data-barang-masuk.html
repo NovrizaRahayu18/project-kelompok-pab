@@ -50,6 +50,11 @@
                     
                 </tbody>
             </table>
+
+            <div id="pagination" class="pagination">
+            <!-- Pagination controls akan dirender oleh JavaScript -->
+            </div>
+
         </div>
     </div>
 </div>
@@ -66,18 +71,24 @@ const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('id-ID', options);
 };
 
-const loadDataBarangMasuk = async () => {
+let currentPage = 0;
+let totalPages = 0;
+
+const loadDataBarangMasuk = async (page = 0) => {
     try {
-        const response = await fetch('/api/barang-masuk');
+        const response = await fetch(`/api/barang-masuk?page=${page}&limit=9`);
         const data = await response.json();
+
+        totalPages = data.totalPages;
+        currentPage = data.page;
         
         const tableBody = document.getElementById('data_barang_masuk');
         tableBody.innerHTML = '';
         
-        data.forEach((item, index) => {
+        data.result.forEach((item, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${index + 1}</td>
+                <td>${(currentPage * 9) + index + 1}</td>
                 <td class="tengah">${item.id_barang_masuk}</td>
                 <td>${item.id_barang} - ${item.barang.nama_barang}</td>
                 <td>${formatDate(item.tanggal_masuk)}</td>
@@ -90,9 +101,28 @@ const loadDataBarangMasuk = async () => {
             `;
             tableBody.appendChild(row);
         });
+
+        updatePagination();
     } catch (error) {
         console.error('Error:', error);
     }
+};
+
+const updatePagination = () => {
+    const paginationElement = document.getElementById('pagination');
+    
+    let paginationHTML = `
+        <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
+        <span>Page ${currentPage + 1} of ${totalPages}</span>
+        <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
+    `;
+    
+    paginationElement.innerHTML = paginationHTML;
+};
+
+const changePage = (page) => {
+    if (page < 0 || page >= totalPages) return;
+    loadDataBarangMasuk(page);
 };
 
 const deleteBarangMasuk = async (id) => {

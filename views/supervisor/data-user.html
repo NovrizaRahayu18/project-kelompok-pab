@@ -68,7 +68,7 @@ const loadDataUser = async () => {
         tableBody.innerHTML = ''; // Clear existing data
 
         // Filter data to only include users with role "petugas"
-        const filteredData = data.filter(user => user.role === 'petugas');
+        const filteredData = data.result.filter(user => user.role === 'petugas');
 
         filteredData.forEach((user, index) => {
             const row = document.createElement('tr');

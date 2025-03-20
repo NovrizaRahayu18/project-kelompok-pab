@@ -68,7 +68,7 @@ const loadDataPenjualan = async () => {
             const tableBody = document.getElementById('data_penjualan');
             tableBody.innerHTML = '';
             
-            data.forEach((penjualan, index) => {
+            data.result.forEach((penjualan, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>

@@ -209,3 +209,29 @@ td:first-child {
     }
     
 }
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination button {
+    background-color: rgb(37, 223, 37);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 70px;
+}
+
+.pagination button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-weight: bold;
+}
