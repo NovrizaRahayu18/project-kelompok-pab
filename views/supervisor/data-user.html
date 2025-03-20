@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Foto - Data User</title>
-    <link rel="stylesheet" href="/owner/style/data-user.css">
+    <link rel="stylesheet" href="/supervisor/style/data-user.css">
     <link rel="icon" href="../images/logo.jpg" type="image/jpg">
     <style>
         
@@ -35,7 +35,7 @@
 
     <div class="konten">
         <div class="isi-konten">
-            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/owner/tambah-user.html'"> + Tambah</button></div>
+            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/supervisor/tambah-user.html'"> + Tambah</button></div>
             <table border="1">
                 <thead>
                     <tr>
@@ -53,27 +53,37 @@
                 </tbody>
             </table>
             
+            <div id="pagination" class="pagination">
+            <!-- Pagination controls akan dirender oleh JavaScript -->
+            </div>
             
         </div>
     </div>
 </div>
 <script>
 
-const loadDataUser = async () => {
+let currentPage = 0;
+let totalPages = 0;
+
+const loadDataUser = async (page = 0) => {
     try {
-        const response = await fetch('/api/user');
+        const response = await fetch(`/api/user?page=${page}&limit=9&accessRole=supervisor`);
+        if (!response.ok) {
+            throw new Error('Gagal mengambil data user');
+        }
         const data = await response.json();
+
+        totalPages = data.totalPages;
+        currentPage = data.page;
 
         const tableBody = document.getElementById('data_user');
         tableBody.innerHTML = ''; // Clear existing data
 
-        // Filter data to only include users with role "petugas"
-        const filteredData = data.result.filter(user => user.role === 'petugas');
 
-        filteredData.forEach((user, index) => {
+        data.result.forEach((user, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${index + 1}</td>
+                <td>${(currentPage * 9) + index + 1}</td>
                 <td class="tengah">${user.id_user}</td>
                 <td>${user.username}</td>
                 <td>${user.password.length > 6 ? user.password.slice(0, Math.ceil(user.password.length / 2)) + '...' : user.password}</td>
@@ -86,11 +96,29 @@ const loadDataUser = async () => {
             `;
             tableBody.appendChild(row);
         });
+
+        updatePagination();
     } catch (error) {
         console.error('Error:', error);
     }
 };
 
+const updatePagination = () => {
+    const paginationElement = document.getElementById('pagination');
+
+    let paginationHTML = `
+        <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
+        <span>Page ${currentPage + 1} of ${totalPages}</span>
+        <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
+    `;
+
+    paginationElement.innerHTML = paginationHTML;
+};
+
+const changePage = (page) => {
+    if (page < 0 || page >= totalPages) return;
+    loadDataUser(page);
+};
 
 // Function to handle delete
 const deleteUser = async (id) => {
@@ -115,12 +143,12 @@ const deleteUser = async (id) => {
 
 
 const editUser = (id) => {
-    window.location.href = `/owner/edit-data-user.html?id=${id}`;
+    window.location.href = `/supervisor/edit-data-user.html?id=${id}`;
 };
 
 
 document.querySelector('.btn.tambah').addEventListener('click', () => {
-    window.location.href = '/owner/tambah-data-user.html';
+    window.location.href = '/supervisor/tambah-data-user.html';
 });
 
 document.addEventListener('DOMContentLoaded', loadDataUser);

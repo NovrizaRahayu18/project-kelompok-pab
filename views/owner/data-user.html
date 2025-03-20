@@ -69,7 +69,7 @@ let totalPages = 0;
 
 const loadDataUser = async (page = 0) => {
     try {
-        const response = await fetch(`/api/user?page=${page}&limit=9`);
+        const response = await fetch(`/api/user?page=${page}&limit=9&accessRole=admin`);
         const data = await response.json();
 
         totalPages = data.totalPages;

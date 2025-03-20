@@ -81,7 +81,7 @@ const loadDataPenjualan = async (page = 0) => {
             data.result.forEach((penjualan, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td>${(currentPage * 9) + index + 1}</td>
                     <td class="tengah">${penjualan.id_penjualan}</td>
                     <td>${penjualan.tanggal_penjualan}</td>
                     <td class="kanan">${penjualan.total_harga}</td>
@@ -116,7 +116,7 @@ const updatePagination = () => {
 
 const changePage = (page) => {
     if (page < 0 || page >= totalPages) return;
-    loadDataUser(page);
+    loadDataPenjualan(page);
 };
 
     const showDetail = (id) => {

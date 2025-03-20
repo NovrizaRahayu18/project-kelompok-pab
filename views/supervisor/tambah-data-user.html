@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Foto - Tambah User</title>
-    <link rel="stylesheet" href="/owner/style/tambah-data-user.css">
+    <link rel="stylesheet" href="/supervisor/style/tambah-data-user.css">
     <link rel="icon" href="../images/logo.jpg" type="image/jpg">
 </head>
 <body>
@@ -45,9 +45,7 @@
                         
                         <div class="form-group">
                             <label for="role">Role</label>
-                            <select id="role" name="role" required>
-                                <option value="petugas">Petugas</option>
-                            </select>
+                            <input type="text" id="role" name="role" required value="Petugas" readonly>
                         </div>
 
                         <div class="form-group">
@@ -57,7 +55,7 @@
                         
                         <div class="btn-container">
                             <button type="submit" class="btn btn-save">Simpan</button>
-                            <button type="button" class="btn btn-cancel" onclick="window.location.href='/owner/data-user.html'">Batal</button>
+                            <button type="button" class="btn btn-cancel" onclick="window.location.href='/supervisor/data-user.html'">Batal</button>
                         </div>
                     </form>
                 </div>
@@ -83,7 +81,7 @@ document.getElementById('tambahForm').addEventListener('submit', async (e) => {
 
         if (response.ok) {
             alert('User berhasil ditambahkan');
-            window.location.href = '/owner/data-user.html';
+            window.location.href = '/supervisor/data-user.html';
         } else {
             const error = await response.json();
             alert(error.msg || 'Gagal menambahkan User');
