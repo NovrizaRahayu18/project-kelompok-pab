@@ -49,7 +49,11 @@
                     
                 </tbody>
             </table>
-            
+
+            <div id="pagination" class="pagination">
+            <!-- Pagination -->
+            </div>
+
         </div>
     </div>
 </div>
@@ -63,18 +67,24 @@ const formatRupiah = (number) => {
     }).format(number);
 }
 
-const loadDataBarang = async () => {
+let currentPage = 0;
+let totalPages = 0;
+
+const loadDataBarang = async (page = 0) => {
     try {
-        const response = await fetch('/api/barang');
+        const response = await fetch(`/api/barang?page=${page}&limit=5`);
         const data = await response.json();
+
+        totalPages = data.totalPages;
+        currentPage = data.page;
         
         const tableBody = document.getElementById('data_barang');
         tableBody.innerHTML = ''; 
         
-        data.forEach((barang, index) => {
+        data.result.forEach((barang, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${index + 1}</td>
+                <td>${(currentPage * 5) + index + 1}</td>
                 <td class="tengah">${barang.id_barang}</td>
                 <td>${barang.nama_barang}</td>
                 <td class="tengah">
@@ -90,6 +100,8 @@ const loadDataBarang = async () => {
             `;
             tableBody.appendChild(row);
         });
+
+        updatePagination();
     } catch (error) {
         console.error('Error:', error);
     }
@@ -122,6 +134,25 @@ const deleteBarang = async (id) => {
             alert('Terjadi kesalahan saat menghapus barang');
         }
     }
+};
+
+// Fungsi untuk update pagination controls
+const updatePagination = () => {
+    const paginationElement = document.getElementById('pagination');
+    
+    let paginationHTML = `
+        <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
+        <span>Page ${currentPage + 1} of ${totalPages}</span>
+        <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
+    `;
+    
+    paginationElement.innerHTML = paginationHTML;
+};
+
+// Fungsi untuk ganti halaman
+const changePage = (page) => {
+    if (page < 0 || page >= totalPages) return;
+    loadDataBarang(page);
 };
 
 const editBarang = (id) => {
