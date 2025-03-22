@@ -39,7 +39,35 @@
         </div>
 
         <div class="bulan">
-            <p class="judul-bulan" id="bulan-transaksi"> Transaksi Bulan Januari</p>
+            <p class="judul-bulan" id="bulan-transaksi"> Transaksi Bulan</p>
+            <select id="month-select" name="month">
+                <option value="january">Januari</option>
+                <option value="february">Februari</option>
+                <option value="march">Maret</option>
+                <option value="april">April</option>
+                <option value="may">Mei</option>
+                <option value="june">Juni</option>
+                <option value="july">Juli</option>
+                <option value="august">Agustus</option>
+                <option value="september">September</option>
+                <option value="october">Oktober</option>
+                <option value="november">November</option>
+                <option value="december">Desember</option>
+            </select>
+            
+            <select id="year-select" name="year">
+                <option value="2025">2025</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+                <option value="2031">2031</option>
+                <option value="2032">2032</option>
+                <option value="2033">2033</option>
+                <option value="2034">2034</option>
+                <option value="2035">2035</option>
+
+            </select>
         </div>
 
         <div class="con-card">
@@ -47,125 +75,46 @@
             <div class="card-dash">
                 <div class="card-title">
                     <h3> Total Transaksi</h3>
-                    <h3 id="transaksi"></h3>
+                    <h3 id="transaksi-bulan"></h3>
                 </div>
             </div>
     
             <div class="card-dash">
                 <div class="card-title">
                     <h3> Total Pendapatan</h3>
-                    <h3 id="pendapatan"></h3>
+                    <h3 id="pendapatan-bulan"></h3>
                 </div>
             </div>
     
         </div>
+
+        <div>
+            <h3>Transaksi Harian</h3>
+            <label for="date-select">Pilih Tanggal:</label>
+            <input type="date" id="date-select">
+        </div>
+
+        <div class="con-card">
+
+            <div class="card-dash">
+                <div class="card-title">
+                    <h3> Total Transaksi</h3>
+                    <h3 id="transaksi-tanggal"></h3>
+                </div>
+            </div>
+    
+            <div class="card-dash">
+                <div class="card-title">
+                    <h3> Total Pendapatan</h3>
+                    <h3 id="pendapatan-tanggal"></h3>
+                </div>
+            </div>
+    
+        </div>
+        
     </div>
 </div>
-<script>
-
-const now = new Date();
-    const bulan = now.getMonth();  // Angka bulan dimulai dari 0 (Januari = 0, Februari = 1, dst.)
-    
-    
-    const namaBulan = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
-
-    document.getElementById('bulan-transaksi').textContent = `Transaksi Bulan ${namaBulan[bulan]}`;
-
-    function getCookieValue(cookieName) {
-            const cookies = document.cookie.split('; ');
-            
-            for (let i = 0; i < cookies.length; i++) {
-                const [key, value] = cookies[i].split('=');
-                if (key === cookieName) {
-                    return decodeURIComponent(value); 
-                }
-            }
-            return null; 
-        }
-        const username = getCookieValue('nama_lengkap');
-        console.log(username)
-
-        if (username) {
-            document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${username}`;
-        } else {
-            document.getElementById('nama_lengkap').textContent = 'Anonymous';
-        }
-
-        const role = getCookieValue('role');
-        console.log(role)
-
-        if (role) {
-            document.getElementById('role').textContent =` Saat ini anda login dengan role ${role}`;
-        } else {
-            document.getElementById('role').textContent = 'Anonymous';
-        }
-
-    
-    async function handleLogout(event) {
-        event.preventDefault();
-        
-        if (confirm("Apakah Anda yakin ingin logout?")) {
-            try {
-                const response = await fetch('/api/logout', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-
-                if (response.ok) {
-                    window.location.href = '/login'; 
-                } else {
-                    alert('Gagal logout. Silakan coba lagi.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan saat logout');
-            }
-        }
-    }
-
-    async function loadDashboardStats() {
-    try {
-        const response = await fetch('/api/dashboard-stats');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const stats = await response.json();
-
-        // Transaksi Card
-        const transaksiCard = document.getElementById('transaksi');
-        transaksiCard.innerHTML = `
-            <h3>${stats.totalTransaksi}</h3>
-        `;
-
-        // Pendapatan Card
-        const pendapatanCard = document.getElementById('pendapatan');
-        pendapatanCard.innerHTML = `
-            <p>${formatRupiah(stats.totalPendapatan)}</p>
-        `;
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-function formatRupiah(angka) {
-    let number_string = angka.toString();
-    let sisa = number_string.length % 3;
-    let rupiah = number_string.substr(0, sisa);
-    let ribuan = number_string.substr(sisa).match(/\d{3}/g);
-
-    if (ribuan) {
-        let separator = sisa ? '.' : '';
-        rupiah += separator + ribuan.join('.');
-    }
-
-    return 'Rp ' + rupiah;
-}
-
-document.addEventListener('DOMContentLoaded', loadDashboardStats);
-</script>
+<script src="/petugas/script/script.js"></script>
 
 </body>
 </html>

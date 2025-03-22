@@ -69,7 +69,7 @@
 // fech barang ke dropdown
 async function getBarang() {
     try {
-        const response = await fetch('/api/barang');
+        const response = await fetch('/api/barang?all=true');
         const data = await response.json();
         
         const select = document.getElementById('id_barang');

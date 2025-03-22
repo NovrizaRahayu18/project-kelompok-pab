@@ -6,30 +6,46 @@ import { Op } from "sequelize";
 
 export const getBarang = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit) || 5;
-    const offset = limit * page;
-    const totalRows = await Barang.count();
-    const totalPages = Math.ceil(totalRows / limit);
+    // Cek apakah client meminta semua data
+    const getAllData = req.query.all === "true";
 
-    const response = await Barang.findAll({
-      offset: offset,
-      limit: limit,
-      order: [["id_barang", "ASC"]],
-    });
+    if (getAllData) {
+      // Jika meminta semua data, abaikan pagination
+      const response = await Barang.findAll({
+        order: [["id_barang", "ASC"]],
+      });
 
-    res.json({
-      result: response,
-      page: page,
-      limit: limit,
-      totalRows: totalRows,
-      totalPages: totalPages,
-    });
+      return res.json({
+        result: response,
+        totalRows: response.length,
+      });
+    } else {
+      // Kode pagination
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 5;
+      const offset = limit * page;
+      const totalRows = await Barang.count();
+      const totalPages = Math.ceil(totalRows / limit);
+
+      const response = await Barang.findAll({
+        offset: offset,
+        limit: limit,
+        order: [["id_barang", "ASC"]],
+      });
+
+      return res.json({
+        result: response,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPages: totalPages,
+      });
+    }
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ msg: "Server Error" });
   }
-}
+};
 
 export const getBarangById = async(req, res) => {
     try {

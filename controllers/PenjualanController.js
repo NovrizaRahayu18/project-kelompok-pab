@@ -272,40 +272,40 @@ export const checkBarangInSales = async (req, res) => {
 }
 
 export const getDashboardStats = async (req, res) => {
-    try {
-        const { month, year } = req.query;
+  try {
+    const { month, year, date } = req.query;
 
-        // Gunakan bulan dan tahun saat ini jika parameter tidak diberikan
-        const now = new Date();
-        const filterMonth = month || now.getMonth() + 1; // Default ke bulan ini
-        const filterYear = year || now.getFullYear();   // Default ke tahun ini
+    let totalTransaksi = 0,
+      totalPendapatan = 0;
 
-        // Hitung awal dan akhir bulan
-        const startOfMonth = new Date(filterYear, filterMonth - 1, 1); // Hari pertama bulan
-        const endOfMonth = new Date(filterYear, filterMonth, 0);       // Hari terakhir bulan
+    if (date) {
+      // Filter berdasarkan tanggal harian
+      totalTransaksi = await Penjualan.count({
+        where: { tanggal_penjualan: { [Op.eq]: new Date(date) } },
+      });
+      totalPendapatan = await Penjualan.sum("total_harga", {
+        where: { tanggal_penjualan: { [Op.eq]: new Date(date) } },
+      });
+    } else if (month && year) {
+      // Filter berdasarkan bulan
+      const startOfMonth = new Date(year, month - 1, 1);
+      const endOfMonth = new Date(year, month, 0);
 
-        // Filter data berdasarkan tanggal_penjualan
-        const totalTransaksi = await Penjualan.count({
-            where: {
-                tanggal_penjualan: {
-                    [Op.between]: [startOfMonth, endOfMonth]
-                }
-            }
-        });
-
-        const totalPendapatan = await Penjualan.sum('total_harga', {
-            where: {
-                tanggal_penjualan: {
-                    [Op.between]: [startOfMonth, endOfMonth]
-                }
-            }
-        });
-
-        res.json({
-            totalTransaksi,
-            totalPendapatan
-        });
-    } catch (error) {
-        res.status(500).json({ msg: "Error mengambil statistik" });
+      totalTransaksi = await Penjualan.count({
+        where: {
+          tanggal_penjualan: { [Op.between]: [startOfMonth, endOfMonth] },
+        },
+      });
+      totalPendapatan = await Penjualan.sum("total_harga", {
+        where: {
+          tanggal_penjualan: { [Op.between]: [startOfMonth, endOfMonth] },
+        },
+      });
     }
-}
+
+    res.json({ totalTransaksi, totalPendapatan });
+  } catch (error) {
+    res.status(500).json({ msg: "Error mengambil statistik" });
+  }
+};
+
