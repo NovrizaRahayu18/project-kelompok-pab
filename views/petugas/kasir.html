@@ -76,7 +76,7 @@ let total = 0;
 
 async function loadDataBarang() {
     try {
-        const response = await fetch('/api/barang');
+        const response = await fetch('/api/barang?all=true');
         const data = await response.json();
         
         displayContainer.innerHTML = '';

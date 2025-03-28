@@ -96,13 +96,17 @@ a:hover {
 }
 
 .display {
-    /* background-color: red; */
     width: 50%;
     display: flex;
-    flex-wrap: wrap; 
-    gap: 20px; 
-    padding: 10px; 
-    justify-content:space-evenly; 
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px;
+    justify-content: space-evenly;
+    overflow-y: auto;
+    /* Tambahkan properti ini */
+    max-height: 450px;
+    /* Tambahkan batas tinggi agar scroll berfungsi */
+    margin-right: 10px;
 }
 
 .judul-konten {
