@@ -32,7 +32,10 @@
     <div class="konten">
         <div class="isi-konten">
             <div class="judul-konten">
-                <p class="judul-daftar">Daftar Barang</p>
+                <div class="judul-daftar">
+                    <p class="judul-daftar-isi">Daftar Barang</p>
+                    <input type="text" id="search-bar" placeholder="Cari barang...">
+                </div>
                 <p class="judul-kasir">Kasir</p>
             </div>
 
@@ -75,14 +78,19 @@ const kasirContainer = document.querySelector('.isi-kasir');
 let selectedItems = [];
 let total = 0;
 
-async function loadDataBarang() {
+async function loadDataBarang(searchTerm = '') {
     try {
-        const response = await fetch('/api/barang');
+        const response = await fetch('/api/barang?all=true');
         const data = await response.json();
         
         displayContainer.innerHTML = '';
         
-        data.result.forEach(barang => {
+        // Filter items based on search term
+        const filteredItems = data.result.filter(barang => 
+            barang.nama_barang.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        
+        filteredItems.forEach(barang => {
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
@@ -105,6 +113,17 @@ async function loadDataBarang() {
         console.error('Error:', error);
     }
 }
+
+// Add event listener to search bar
+document.getElementById('search-bar').addEventListener('input', (e) => {
+    const searchTerm = e.target.value;
+    loadDataBarang(searchTerm);
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadDataBarang();
+});
 
 function addToKasir(barang) {
 
@@ -306,7 +325,7 @@ function resetKasir() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadDataBarang);
+// document.addEventListener('DOMContentLoaded', loadDataBarang);
 
 async function handleLogout(event) {
     event.preventDefault();
