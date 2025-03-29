@@ -31,7 +31,20 @@
 
     <div class="konten">
         <div class="isi-konten">
-            <div class="con-button"><button id="printButton" class="btn print">Print Halaman</button></div>
+            <div class="con-button">
+                <button id="printButton" class="btn print">Print Halaman</button>
+                <div class="filter-container">
+                    <div class="date-filter">
+                        <label for="startDate">Dari Tanggal:</label>
+                        <input type="date" id="startDate">
+                        <label for="endDate">Sampai Tanggal:</label>
+                        <input type="date" id="endDate">
+                        <button onclick="resetFilter()" class="btn reset">Reset Filter</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- <div id="filterStatus" class="filter-status">Tidak ada filter aktif</div> -->
             <table border="1">
                 <thead>
                     <tr>
@@ -65,43 +78,54 @@ let currentPage = 0;
 let totalPages = 0;
 
 const loadDataPenjualan = async (page = 0) => {
-        try {
-            const response = await fetch(`/api/penjualan?page=${page}&limit=9`);
-            if (!response.ok) {
-                throw new Error('Gagal mengambil data penjualan');
-            }
-            const data = await response.json();
-
-            totalPages = data.totalPages;
-            currentPage = data.page;
-            
-            const tableBody = document.getElementById('data_penjualan');
-            tableBody.innerHTML = '';
-            
-            data.result.forEach((penjualan, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${(currentPage * 9) + index + 1}</td>
-                    <td class="tengah">${penjualan.id_penjualan}</td>
-                    <td>${penjualan.tanggal_penjualan}</td>
-                    <td class="kanan">${penjualan.total_harga}</td>
-                    <td class="kanan">${penjualan.uang_bayar}</td>
-                    <td class="kanan">${penjualan.kembalian}</td>
-                    <td>
-                        <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-
-            updatePagination();
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Gagal memuat data penjualan');
+    try {
+        // Get start and end dates from input
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        
+        // Construct URL with optional date filtering
+        let url = `/api/penjualan?page=${page}&limit=9`;
+        if (startDateInput.value && endDateInput.value) {
+            url += `&startDate=${startDateInput.value}&endDate=${endDateInput.value}`;
         }
-    };
 
-    const updatePagination = () => {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Gagal mengambil data penjualan');
+        }
+        const data = await response.json();
+
+        totalPages = data.totalPages;
+        currentPage = data.page;
+        
+        const tableBody = document.getElementById('data_penjualan');
+        tableBody.innerHTML = '';
+        
+        data.result.forEach((penjualan, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${(currentPage * 9) + index + 1}</td>
+                <td class="tengah">${penjualan.id_penjualan}</td>
+                <td>${penjualan.tanggal_penjualan}</td>
+                <td class="kanan">${penjualan.total_harga}</td>
+                <td class="kanan">${penjualan.uang_bayar}</td>
+                <td class="kanan">${penjualan.kembalian}</td>
+                <td>
+                    <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        updatePagination();
+        // updateFilterStatus();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Gagal memuat data penjualan');
+    }
+};
+
+const updatePagination = () => {
     const paginationElement = document.getElementById('pagination');
     
     let paginationHTML = `
@@ -117,6 +141,39 @@ const changePage = (page) => {
     if (page < 0 || page >= totalPages) return;
     loadDataPenjualan(page);
 };
+
+// const updateFilterStatus = () => {
+//     const filterStatusElement = document.getElementById('filterStatus');
+//     const startDateInput = document.getElementById('startDate');
+//     const endDateInput = document.getElementById('endDate');
+    
+//     if (startDateInput.value && endDateInput.value) {
+//         filterStatusElement.textContent = `Filter: ${startDateInput.value} s/d ${endDateInput.value}`;
+//     } else {
+//         filterStatusElement.textContent = 'Tidak ada filter aktif';
+//     }
+// };
+
+const resetFilter = () => {
+    // Reset date inputs
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    
+    // Update filter status
+    document.getElementById('filterStatus').textContent = 'Tidak ada filter aktif';
+    
+    // Reload data without filters
+    loadDataPenjualan();
+};
+
+// Add event listeners for filtering
+document.getElementById('startDate').addEventListener('change', () => loadDataPenjualan());
+document.getElementById('endDate').addEventListener('change', () => loadDataPenjualan());
+
+// Initial load
+document.addEventListener('DOMContentLoaded', () => {
+    loadDataPenjualan();
+});
 
     const showDetail = (id) => {
         window.location.href = `/petugas/data-detail-penjualan.html?id=${id}`;

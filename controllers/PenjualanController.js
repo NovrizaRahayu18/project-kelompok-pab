@@ -11,7 +11,22 @@ export const getPenjualan = async (req, res) => {
     const page = parseInt(req.query.page) || 0;
     const limit = parseInt(req.query.limit) || 9;
     const offset = limit * page;
-    const totalRows = await Penjualan.count();
+
+    // Add date filtering
+    const { startDate, endDate } = req.query;
+
+    // Prepare where conditions for filtering
+    const whereCondition = {};
+    if (startDate && endDate) {
+      whereCondition.tanggal_penjualan = {
+        [Op.between]: [new Date(startDate), new Date(endDate)],
+      };
+    }
+
+    // Count total rows with filtering
+    const totalRows = await Penjualan.count({
+      where: whereCondition,
+    });
     const totalPages = Math.ceil(totalRows / limit);
 
     const response = await Penjualan.findAll({
@@ -22,9 +37,10 @@ export const getPenjualan = async (req, res) => {
         "uang_bayar",
         "kembalian",
       ],
+      where: whereCondition,
       offset: offset,
       limit: limit,
-      order: [["id_penjualan", "ASC"]],
+      order: [["tanggal_penjualan", "DESC"]],
     });
 
     const formattedResponse = response.map((item) => ({
