@@ -33,7 +33,18 @@
 
     <div class="konten">
         <div class="isi-konten">
-            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/owner/tambah-data-barang-masuk.html'"> + Tambah</button></div>
+            <div class="con-button">
+                <button class="btn tambah" onclick="window.location.href='/owner/tambah-data-barang-masuk.html'"> + Tambah</button>
+                <div class="filter-container">
+                    <div class="date-filter">
+                        <label for="startDate">Dari Tanggal:</label>
+                        <input type="date" id="startDate">
+                        <label for="endDate">Sampai Tanggal:</label>
+                        <input type="date" id="endDate">
+                        <button onclick="resetFilter()" class="btn reset">Reset Filter</button>
+                    </div>
+                </div>
+            </div>
             <table border="1">
                 <thead>
                     <tr>
@@ -60,48 +71,83 @@
 </div>
 
 <script>
-// Function to format date
+
 const formatDate = (dateString) => {
-    const options = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric',
-        // timeZone: 'Asia/Jakarta'
-    };
-    return new Date(dateString).toLocaleDateString('id-ID', options);
+    const date = new Date(dateString);
+
+    const day = String(date.getDate()).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = date.getFullYear();
+
+    return `${month}-${day}-${year}`;
 };
 
-let currentPage = 0;
-let totalPages = 0;
+document.getElementById('startDate').addEventListener('change', applyDateFilter);
+document.getElementById('endDate').addEventListener('change', applyDateFilter);
 
+// Fungsi untuk menerapkan filter tanggal
+function applyDateFilter() {
+    // Reset ke halaman pertama saat menerapkan filter
+    currentPage = 0;
+    loadDataBarangMasuk();
+}
+
+// Fungsi reset filter
+function resetFilter() {
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    currentPage = 0;
+    loadDataBarangMasuk();
+}
+
+// Update fungsi loadDataBarangMasuk untuk menyertakan parameter filter tanggal
 const loadDataBarangMasuk = async (page = 0) => {
     try {
-        const response = await fetch(`/api/barang-masuk?page=${page}&limit=9`);
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        
+        let url = `/api/barang-masuk?page=${page}&limit=9`;
+        
+        // Tambahkan parameter tanggal jika ada
+        if (startDate) {
+            url += `&startDate=${startDate}`;
+        }
+        if (endDate) {
+            url += `&endDate=${endDate}`;
+        }
+        
+        const response = await fetch(url);
         const data = await response.json();
-
         totalPages = data.totalPages;
         currentPage = data.page;
         
         const tableBody = document.getElementById('data_barang_masuk');
         tableBody.innerHTML = '';
         
-        data.result.forEach((item, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${(currentPage * 9) + index + 1}</td>
-                <td class="tengah">${item.id_barang_masuk}</td>
-                <td>${item.id_barang} - ${item.barang.nama_barang}</td>
-                <td>${formatDate(item.tanggal_masuk)}</td>
-                <td class="tengah">${item.jumlah}</td>
-                <td>${item.keterangan || '-'}</td>
-                <td>
-                    <button class="btn edit" onclick="editBarangMasuk(${item.id_barang_masuk})">Edit</button>
-                    <button class="btn delete" onclick="deleteBarangMasuk(${item.id_barang_masuk})">Hapus</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-
+        if (data.result.length === 0) {
+            // Tampilkan pesan jika tidak ada data yang ditemukan
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = `<td colspan="7" style="text-align: center;">Tidak ada data dalam rentang tanggal yang dipilih</td>`;
+            tableBody.appendChild(emptyRow);
+        } else {
+            data.result.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${(currentPage * 9) + index + 1}</td>
+                    <td class="tengah">${item.id_barang_masuk}</td>
+                    <td>${item.id_barang} - ${item.barang.nama_barang}</td>
+                    <td class="tengah">${formatDate(item.tanggal_masuk)}</td>
+                    <td class="tengah">${item.jumlah}</td>
+                    <td>${item.keterangan || '-'}</td>
+                    <td>
+                        <button class="btn edit" onclick="editBarangMasuk(${item.id_barang_masuk})">Edit</button>
+                        <button class="btn delete" onclick="deleteBarangMasuk(${item.id_barang_masuk})">Hapus</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
         updatePagination();
     } catch (error) {
         console.error('Error:', error);
@@ -120,8 +166,10 @@ const updatePagination = () => {
     paginationElement.innerHTML = paginationHTML;
 };
 
+// Fungsi untuk ganti halaman
 const changePage = (page) => {
     if (page < 0 || page >= totalPages) return;
+    currentPage = page;
     loadDataBarangMasuk(page);
 };
 
