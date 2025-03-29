@@ -39,41 +39,250 @@
             <p class="isi-welcome" id="role"></p>
         </div>
 
-        <div class="bulan">
-            <p class="judul-bulan" id="bulan-transaksi"> Transaksi Bulan Januari</p>
-        </div>
+        <div class="judul-konten">
+            <div class="bulan">
+                <p class="judul-bulan">Transaksi Bulan</p>
+                <select id="month-select" name="month">
+                    <option value="january">Januari</option>
+                    <option value="february">Februari</option>
+                    <option value="march">Maret</option>
+                    <option value="april">April</option>
+                    <option value="may">Mei</option>
+                    <option value="june">Juni</option>
+                    <option value="july">Juli</option>
+                    <option value="august">Agustus</option>
+                    <option value="september">September</option>
+                    <option value="october">Oktober</option>
+                    <option value="november">November</option>
+                    <option value="december">Desember</option>
+                </select>
+            
+                <select id="year-select" name="year">
+                    <option value="2025">2025</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                    <option value="2031">2031</option>
+                    <option value="2032">2032</option>
+                    <option value="2033">2033</option>
+                    <option value="2034">2034</option>
+                    <option value="2035">2035</option>
+                </select>
 
-        <div class="con-card">
+                <div class="con-card">
+                    <div class="card-dash">
+                        <div class="card-title">
+                            <h3> Total Transaksi</h3>
+                            <h3 id="transaksi-bulan">0</h3>
+                        </div>
+                    </div>
+            
+                    <div class="card-dash">
+                        <div class="card-title">
+                            <h3> Total Pendapatan</h3>
+                            <h3 id="pendapatan-bulan">0</h3>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="card-dash">
-                <div class="card-title">
-                    <h3> Total Transaksi</h3>
-                    <h3 id="transaksi"></h3>
+            </div>
+
+            <div class="harian">
+
+                <p class="judul-harian">Transaksi Harian</p>
+                <div class="con-hari">
+                    <input type="date" id="date-select" class="hari">
+                </div>
+
+                <div class="con-card">
+                    <div class="card-dash">
+                        <div class="card-title">
+                            <h3> Total Transaksi</h3>
+                            <h3 id="transaksi-tanggal">0</h3>
+                        </div>
+                    </div>
+            
+                    <div class="card-dash">
+                        <div class="card-title">
+                            <h3> Total Pendapatan</h3>
+                            <h3 id="pendapatan-tanggal">0</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
-    
-            <div class="card-dash">
-                <div class="card-title">
-                    <h3> Total Pendapatan</h3>
-                    <h3 id="pendapatan"></h3>
-                </div>
-            </div>
-    
         </div>
     </div>
 </div>
+
 <script>
+    async function loadDashboardStats(month = null, year = null) {
+    try {
+        // Buat URL dengan query params jika ada
+        let url = '/api/dashboard-stats';
+        const params = new URLSearchParams();
+        
+        if (month) params.append('month', month);
+        if (year) params.append('year', year);
+        
+        if (params.toString()) {
+            url += `?${params.toString()}`;
+        }
 
-const now = new Date();
-    const bulan = now.getMonth();  // Angka bulan dimulai dari 0 (Januari = 0, Februari = 1, dst.)
-    
-    
-    const namaBulan = [
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const stats = await response.json();
 
-    document.getElementById('bulan-transaksi').textContent = `Transaksi Bulan ${namaBulan[bulan]}`;
+        // Transaksi Card
+        const transaksiBulanCard = document.getElementById('transaksi-bulan');
+        transaksiBulanCard.innerHTML = "0";
+        transaksiBulanCard.innerHTML = `${stats.totalTransaksi}`;
+
+        // Pendapatan Card
+        const pendapatanBulanCard = document.getElementById('pendapatan-bulan');
+        pendapatanBulanCard.innerHTML = "0";
+        pendapatanBulanCard.innerHTML = `${formatRupiah(stats.totalPendapatan)}`;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Function untuk mengkonversi nama bulan menjadi angka
+function getMonthNumber(monthName) {
+    const months = {
+        'january': 1,
+        'february': 2,
+        'march': 3,
+        'april': 4,
+        'may': 5,
+        'june': 6,
+        'july': 7,
+        'august': 8,
+        'september': 9,
+        'october': 10,
+        'november': 11,
+        'december': 12
+    };
+    return months[monthName.toLowerCase()];
+}
+
+// Event listener untuk perubahan pada dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    // Set nilai default
+    const now = new Date();
+    const currentMonth = now.getMonth(); // 0-11
+    const currentYear = now.getFullYear();
+    
+    // Saat halaman dimuat, load data dengan bulan dan tahun saat ini
+    loadDashboardStats();
+    
+    // Dapatkan elemen select
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
+    
+    // Set default values pada dropdown
+    // Konversi indeks bulan (0-11) ke nama bulan pada dropdown
+    const monthNames = ['january', 'february', 'march', 'april', 'may', 'june', 
+                        'july', 'august', 'september', 'october', 'november', 'december'];
+    monthSelect.value = monthNames[currentMonth];
+    
+    // Set tahun saat ini sebagai default jika tersedia dalam options
+    // Cek apakah ada option dengan nilai tahun saat ini
+    let yearOptionExists = false;
+    for (let option of yearSelect.options) {
+        if (option.value == currentYear) {
+            yearOptionExists = true;
+            option.selected = true;
+            break;
+        }
+    }
+    
+    // Tambahkan event listeners
+    monthSelect.addEventListener('change', updateDashboard);
+    yearSelect.addEventListener('change', updateDashboard);
+    
+    function updateDashboard() {
+        const selectedMonth = getMonthNumber(monthSelect.value);
+        const selectedYear = yearSelect.value;
+        
+        // Load data dengan filter
+        loadDashboardStats(selectedMonth, selectedYear);
+    }
+});
+
+
+async function loadDailyStats(date) {
+    try {
+        const url = `/api/dashboard-stats?date=${date}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const stats = await response.json();
+
+        // Update card untuk tanggal
+        const transaksiTanggalCard = document.getElementById('transaksi-tanggal');
+        transaksiTanggalCard.innerHTML =  stats.totalTransaksi ? `${stats.totalTransaksi}` : "0";
+
+        const pendapatanTanggalCard = document.getElementById('pendapatan-tanggal');
+        pendapatanTanggalCard.innerHTML = stats.totalPendapatan 
+            ? `${formatRupiah(stats.totalPendapatan)}` : "0";
+    } catch (error) {
+        console.error('Error:', error);
+
+        // Jika terjadi kesalahan, set nilai default ke 0
+        const transaksiTanggalCard = document.getElementById('transaksi-tanggal');
+        transaksiTanggalCard.innerHTML = "0";
+
+        const pendapatanTanggalCard = document.getElementById('pendapatan-tanggal');
+        pendapatanTanggalCard.innerHTML = "0";
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
+    const dateInput = document.getElementById('date-select');
+
+    // Set default tanggal hari ini
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    dateInput.value = today;
+
+    // Load data untuk bulan, tahun, dan tanggal saat ini
+    const currentMonth = now.getMonth() + 1; // 0-indexed
+    const currentYear = now.getFullYear();
+
+    loadDashboardStats(currentMonth, currentYear);
+    loadDailyStats(today);
+
+    // Event untuk bulan dan tahun
+    monthSelect.addEventListener('change', () => {
+        const selectedMonth = getMonthNumber(monthSelect.value);
+        const selectedYear = yearSelect.value;
+        loadDashboardStats(selectedMonth, selectedYear);
+    });
+
+    yearSelect.addEventListener('change', () => {
+        const selectedMonth = getMonthNumber(monthSelect.value);
+        const selectedYear = yearSelect.value;
+        loadDashboardStats(selectedMonth, selectedYear);
+    });
+
+    // Event untuk tanggal
+    dateInput.addEventListener('change', () => {
+        const selectedDate = dateInput.value;
+        if (selectedDate) {
+            loadDailyStats(selectedDate);
+        }
+    });
+});
+
+
 
     function getCookieValue(cookieName) {
             const cookies = document.cookie.split('; ');
@@ -86,11 +295,11 @@ const now = new Date();
             }
             return null; 
         }
-        const username = getCookieValue('nama_lengkap');
-        console.log(username)
+        const nama_lengkap = getCookieValue('nama_lengkap');
+        console.log(nama_lengkap);
 
-        if (username) {
-            document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${username}`;
+        if (nama_lengkap) {
+            document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${nama_lengkap}`;
         } else {
             document.getElementById('nama_lengkap').textContent = 'Anonymous';
         }
@@ -99,7 +308,7 @@ const now = new Date();
         console.log(role)
 
         if (role) {
-            document.getElementById('role').textContent =` Saat ini anda login dengan role ${role} penjualan`;
+            document.getElementById('role').textContent =` Saat ini anda login dengan role ${role}`;
         } else {
             document.getElementById('role').textContent = 'Anonymous';
         }
@@ -126,30 +335,6 @@ const now = new Date();
             }
         }
     }
-
-    async function loadDashboardStats() {
-    try {
-        const response = await fetch('/api/dashboard-stats');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const stats = await response.json();
-
-        // Transaksi Card
-        const transaksiCard = document.getElementById('transaksi');
-        transaksiCard.innerHTML = `
-            <h3>${stats.totalTransaksi}</h3>
-        `;
-
-        // Pendapatan Card
-        const pendapatanCard = document.getElementById('pendapatan');
-        pendapatanCard.innerHTML = `
-            <p>${formatRupiah(stats.totalPendapatan)}</p>
-        `;
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
 
 function formatRupiah(angka) {
     let number_string = angka.toString();
