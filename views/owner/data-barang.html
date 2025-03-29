@@ -33,7 +33,10 @@
 
     <div class="konten">
         <div class="isi-konten">
-            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/owner/tambah-barang.html'"> + Tambah</button></div>
+            <div class="con-button">
+                <button class="btn tambah" onclick="window.location.href='/owner/tambah-barang.html'"> + Tambah</button>
+                <input type="text" id="search-bar" placeholder="Cari Barang...">
+            </div>
             <table border="1">
                 <thead>
                     <tr>
@@ -68,12 +71,16 @@ const formatRupiah = (number) => {
     }).format(number);
 }
 
-let currentPage = 0;
-let totalPages = 0;
+document.getElementById('search-bar').addEventListener('input', function() {
+    // Reset ke halaman pertama saat melakukan pencarian
+    currentPage = 0;
+    loadDataBarang();
+});
 
 const loadDataBarang = async (page = 0) => {
     try {
-        const response = await fetch(`/api/barang?page=${page}&limit=5`);
+        const searchQuery = document.getElementById('search-bar').value;
+        const response = await fetch(`/api/barang?page=${page}&limit=5&search=${searchQuery}`);
         const data = await response.json();
         
         totalPages = data.totalPages;
@@ -82,27 +89,33 @@ const loadDataBarang = async (page = 0) => {
         const tableBody = document.getElementById('data_barang');
         tableBody.innerHTML = ''; 
         
-        data.result.forEach((barang, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${(currentPage * 5) + index + 1}</td>
-                <td class="tengah">${barang.id_barang}</td>
-                <td>${barang.nama_barang}</td>
-                <td class="tengah">
-                    <img src="${barang.url}" alt="${barang.nama_barang}" class="gambar-barang">
-                </td>   
-                <td>${formatRupiah(barang.harga_beli)}</td>
-                <td>${formatRupiah(barang.harga_jual)}</td>
-                <td class="tengah">${barang.stok}</td>
-                <td>
-                    <button class="btn edit" onclick="editBarang(${barang.id_barang})">Edit</button>
-                    <button class="btn delete" onclick="deleteBarang(${barang.id_barang})">Hapus</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
+        if (data.result.length === 0) {
+            // Tampilkan pesan jika tidak ada data yang ditemukan
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = `<td colspan="8" style="text-align: center; font-style: italic;">Tidak ada barang yang ditemukan</td>`;
+            tableBody.appendChild(emptyRow);
+        } else {
+            data.result.forEach((barang, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${(currentPage * 5) + index + 1}</td>
+                    <td class="tengah">${barang.id_barang}</td>
+                    <td>${barang.nama_barang}</td>
+                    <td class="tengah">
+                        <img src="${barang.url}" alt="${barang.nama_barang}" class="gambar-barang">
+                    </td>   
+                    <td>${formatRupiah(barang.harga_beli)}</td>
+                    <td>${formatRupiah(barang.harga_jual)}</td>
+                    <td class="tengah">${barang.stok}</td>
+                    <td>
+                        <button class="btn edit" onclick="editBarang(${barang.id_barang})">Edit</button>
+                        <button class="btn delete" onclick="deleteBarang(${barang.id_barang})">Hapus</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
         
-        // Update pagination controls
         updatePagination();
     } catch (error) {
         console.error('Error:', error);
@@ -125,6 +138,7 @@ const updatePagination = () => {
 // Fungsi untuk ganti halaman
 const changePage = (page) => {
     if (page < 0 || page >= totalPages) return;
+    currentPage = page;
     loadDataBarang(page);
 };
 
