@@ -20,6 +20,7 @@ export const getUser = async (req, res) => {
     if (search) {
       whereClause[Op.or] = [
         { nama_lengkap: { [Op.like]: `%${search}%` } }, // Pencarian nama_lengkap
+        { role: { [Op.like]: `%${search}%` } }, // Pencarian role
         { username: { [Op.like]: `%${search}%` } }, // Pencarian username
       ];
     }
