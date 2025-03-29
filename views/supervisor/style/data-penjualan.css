@@ -16,9 +16,9 @@ body {
 .navigasi {
     width: 250px;
     background-color: #FF1493;
-    position: fixed; 
-    height: 100%; 
-    overflow-y: auto; 
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .judul {
@@ -71,11 +71,12 @@ a:hover {
 }
 
 .konten {
-    margin-left: 250px;  
-    width: calc(100% - 250px); 
+    margin-left: 250px;
+    width: calc(100% - 250px);
     display: flex;
     justify-content: center;
-    height: 10px; /* ini untuk tinggi kontennta */
+    height: 10px;
+    /* ini untuk tinggi kontennta */
 }
 
 .isi-konten {
@@ -94,7 +95,8 @@ table {
     border-radius: 5px;
 }
 
-th, td {
+th,
+td {
     padding: 10px;
     border: 1px solid #ddd;
 }
@@ -116,11 +118,11 @@ tr:hover {
 
 
 td:last-child {
-    text-align: center; 
+    text-align: center;
 }
 
 td:first-child {
-    text-align: center; 
+    text-align: center;
 }
 
 
@@ -131,12 +133,12 @@ td:first-child {
     cursor: pointer;
     font-size: 14px;
     color: white;
-    margin: 0 5px; 
+    margin: 0 5px;
 }
 
 .con-button {
     display: flex;
-    justify-content: left;
+    justify-content: space-between;
 }
 
 .tambah {
@@ -146,7 +148,7 @@ td:first-child {
 }
 
 .edit {
-    background-color: #00BFFF; 
+    background-color: #00BFFF;
 }
 
 .print {
@@ -155,7 +157,7 @@ td:first-child {
 }
 
 .delete {
-    background-color: #f44336; 
+    background-color: #f44336;
 }
 
 .mundur {
@@ -172,6 +174,10 @@ td:first-child {
     background-color: #808080;
 }
 
+.reset {
+    background-color: #ff3535;
+}
+
 .btn:hover {
     opacity: 0.8;
 }
@@ -179,6 +185,10 @@ td:first-child {
 .tengah {
     text-align: center;
 }
+
+/* .kanan {
+    text-align: right;
+} */
 
 .gambar-barang {
     border-radius: 0;
@@ -190,6 +200,7 @@ td:first-child {
 
 
 @media print {
+
     /* Sembunyikan sidebar */
     .list {
         display: none;
@@ -208,7 +219,7 @@ td:first-child {
     #printButton {
         display: none;
     }
-    
+
 }
 
 .pagination {
@@ -234,5 +245,23 @@ td:first-child {
 
 .pagination span {
     margin: 0 10px;
+    font-weight: bold;
+}
+
+#startDate,
+#endDate {
+    /* width: 100%; */
+    padding: 3px 4px;
+    font-size: 15px;
+    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-size: 15px;
     font-weight: bold;
 }
