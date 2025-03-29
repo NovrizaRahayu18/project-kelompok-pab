@@ -2,38 +2,69 @@ import Barang from "../models/BarangModel.js";
 import BarangMasuk from "../models/BarangMasukModel.js";
 import db from "../config/Database.js";
 import moment from 'moment';
+import { Op } from "sequelize";
 
 export const getBarangMasuk = async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 0;
-        const limit = parseInt(req.query.limit) || 9;
-        const offset = limit * page;
-        const totalRows = await BarangMasuk.count();
-        const totalPages = Math.ceil(totalRows / limit);
+  try {
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit) || 9;
+    const offset = limit * page;
 
-        const response = await BarangMasuk.findAll({
-            include: [{
-                model: Barang,
-                as: 'barang',
-                attributes: ['nama_barang']
-            }],
-            offset: offset,
-            limit: limit,
-            order: [["id_barang_masuk", "ASC"]]
-        });
+    // Ambil parameter tanggal dari query
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
 
-        res.json({
-          result: response,
-          page: page,
-          limit: limit,
-          totalRows: totalRows,
-          totalPages: totalPages,
-        });
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).json({ msg: "Server Error" });
+    // Buat where clause untuk filter tanggal
+    let whereClause = {};
+    if (startDate || endDate) {
+      whereClause.tanggal_masuk = {};
+
+      // Jika ada startDate, tambahkan kondisi >= startDate
+      if (startDate) {
+        whereClause.tanggal_masuk[Op.gte] = new Date(startDate);
+      }
+
+      // Jika ada endDate, tambahkan kondisi <= endDate (set ke akhir hari)
+      if (endDate) {
+        // Set waktu ke 23:59:59 untuk mencakup seluruh hari
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        whereClause.tanggal_masuk[Op.lte] = endOfDay;
+      }
     }
-}
+
+    // Hitung total rows berdasarkan filter
+    const totalRows = await BarangMasuk.count({
+      where: whereClause,
+    });
+    const totalPages = Math.ceil(totalRows / limit);
+
+    const response = await BarangMasuk.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: Barang,
+          as: "barang",
+          attributes: ["nama_barang"],
+        },
+      ],
+      offset: offset,
+      limit: limit,
+      order: [["id_barang_masuk", "DESC"]],
+    });
+
+    res.json({
+      result: response,
+      page: page,
+      limit: limit,
+      totalRows: totalRows,
+      totalPages: totalPages,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ msg: "Server Error" });
+  }
+};
 
 export const getBarangMasukById = async (req, res) => {
     try {

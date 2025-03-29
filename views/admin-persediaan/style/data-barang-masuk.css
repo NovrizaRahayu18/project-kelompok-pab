@@ -136,7 +136,7 @@ td:first-child {
 
 .con-button {
     display: flex;
-    justify-content: left;
+    justify-content: space-between;
 }
 
 .tambah {
@@ -147,6 +147,7 @@ td:first-child {
 
 .edit {
     background-color: #00BFFF; 
+    width: 60px;
 }
 
 .delete {
@@ -161,6 +162,10 @@ td:first-child {
 .maju {
     margin-top: 15px;
     background-color: #808080;
+}
+
+.reset {
+    background-color: #ff3535;
 }
 
 .btn:hover {
@@ -202,5 +207,23 @@ td:first-child {
 
 .pagination span {
     margin: 0 10px;
+    font-weight: bold;
+}
+
+#startDate,
+#endDate {
+    /* width: 100%; */
+    padding: 3px 4px;
+    font-size: 15px;
+    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    font-size: 15px;
     font-weight: bold;
 }
