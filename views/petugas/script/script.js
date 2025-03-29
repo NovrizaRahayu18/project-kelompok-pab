@@ -177,11 +177,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             return null; 
         }
-        const username = getCookieValue('nama_lengkap');
-        console.log(username)
+        const nama_lengkap = getCookieValue('nama_lengkap');
+        console.log(nama_lengkap);
 
-        if (username) {
-            document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${username}`;
+        if (nama_lengkap) {
+            document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${nama_lengkap}`;
         } else {
             document.getElementById('nama_lengkap').textContent = 'Anonymous';
         }
