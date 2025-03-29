@@ -104,8 +104,9 @@ a:hover {
     padding: 10px;
     justify-content: space-evenly;
     overflow-y: auto;
-    /* Tambahkan properti ini */
     max-height: 450px;
+    min-height: 450px;
+    align-content: flex-start;
     /* Tambahkan batas tinggi agar scroll berfungsi */
     margin-right: 10px;
 }
