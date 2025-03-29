@@ -115,9 +115,18 @@ a:hover {
 }
 
 .judul-daftar {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 40px;
+    margin-right: 200px;
     font-size: 25px;
     font-weight: bold;
     width: 50%;
+}
+
+.judul-daftar-isi{
+    font-size: 25px;
+    font-weight: bold;
 }
 
 .judul-kasir {
@@ -296,4 +305,26 @@ a:hover {
 .kembalian-row {
     font-weight: bold;
     font-size: 1.1em;
+}
+
+#search-bar {
+    width: 100%;
+    max-width: 200px;
+    padding: 5px 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#search-bar:focus {
+    border-color: #FF1493;
+    /* Ganti warna sesuai tema */
+    box-shadow: 0 0 8px #c40d6f;
+}
+
+#search-bar::placeholder {
+    color: #aaa;
+    font-style: italic;
 }
