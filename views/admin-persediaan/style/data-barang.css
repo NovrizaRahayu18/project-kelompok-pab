@@ -136,7 +136,7 @@ td:first-child {
 
 .con-button {
     display: flex;
-    justify-content: left;
+    justify-content: space-between;
 }
 
 .tambah {
@@ -203,4 +203,26 @@ td:first-child {
 .pagination span {
     margin: 0 10px;
     font-weight: bold;
+}
+
+#search-bar {
+    width: 100%;
+    max-width: 200px;
+    max-height: 30px;
+    padding: 5px 15px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+#search-bar:focus {
+    border-color: #FF1493;
+    box-shadow: 0 0 5px #c40d6f;
+}
+
+#search-bar::placeholder {
+    color: #aaa;
+    font-style: italic;
 }

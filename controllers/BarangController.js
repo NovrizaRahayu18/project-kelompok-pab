@@ -6,12 +6,29 @@ import { Op } from "sequelize";
 
 export const getBarang = async (req, res) => {
   try {
+    // Mendapatkan parameter pencarian
+    const search = req.query.search || "";
+
+    // Membuat where clause untuk pencarian
+    let whereClause = {};
+    if (search !== "") {
+      whereClause = {
+        [Op.or]: [
+          { nama_barang: { [Op.like]: `%${search}%` } },
+          { harga_jual: { [Op.like]: `%${search}%` } },
+          { harga_beli: { [Op.like]: `%${search}%` } },
+          { stok: { [Op.like]: `%${search}%` } },
+        ],
+      };
+    }
+
     // Cek apakah client meminta semua data
     const getAllData = req.query.all === "true";
 
     if (getAllData) {
-      // Jika meminta semua data, abaikan pagination
+      // Jika meminta semua data, abaikan pagination tapi tetap terapkan filter pencarian
       const response = await Barang.findAll({
+        where: whereClause,
         order: [["id_barang", "ASC"]],
       });
 
@@ -20,14 +37,19 @@ export const getBarang = async (req, res) => {
         totalRows: response.length,
       });
     } else {
-      // Kode pagination
+      // Kode pagination dengan filter pencarian
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 5;
       const offset = limit * page;
-      const totalRows = await Barang.count();
+
+      // Hitung total rows berdasarkan filter pencarian
+      const totalRows = await Barang.count({
+        where: whereClause,
+      });
       const totalPages = Math.ceil(totalRows / limit);
 
       const response = await Barang.findAll({
+        where: whereClause,
         offset: offset,
         limit: limit,
         order: [["id_barang", "ASC"]],
