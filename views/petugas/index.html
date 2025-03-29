@@ -39,54 +39,6 @@
         </div>
 
         <div class="judul-konten">
-            <div class="bulan">
-                <p class="judul-bulan">Transaksi Bulan</p>
-                <select id="month-select" name="month">
-                    <option value="january">Januari</option>
-                    <option value="february">Februari</option>
-                    <option value="march">Maret</option>
-                    <option value="april">April</option>
-                    <option value="may">Mei</option>
-                    <option value="june">Juni</option>
-                    <option value="july">Juli</option>
-                    <option value="august">Agustus</option>
-                    <option value="september">September</option>
-                    <option value="october">Oktober</option>
-                    <option value="november">November</option>
-                    <option value="december">Desember</option>
-                </select>
-            
-                <select id="year-select" name="year">
-                    <option value="2025">2025</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028</option>
-                    <option value="2029">2029</option>
-                    <option value="2030">2030</option>
-                    <option value="2031">2031</option>
-                    <option value="2032">2032</option>
-                    <option value="2033">2033</option>
-                    <option value="2034">2034</option>
-                    <option value="2035">2035</option>
-                </select>
-
-                <div class="con-card">
-                    <div class="card-dash">
-                        <div class="card-title">
-                            <h3> Total Transaksi</h3>
-                            <h3 id="transaksi-bulan">0</h3>
-                        </div>
-                    </div>
-            
-                    <div class="card-dash">
-                        <div class="card-title">
-                            <h3> Total Pendapatan</h3>
-                            <h3 id="pendapatan-bulan">0</h3>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
             <div class="harian">
 
                 <p class="judul-harian">Transaksi Harian</p>
@@ -118,7 +70,130 @@
         
     </div>
 </div>
-<script src="/petugas/script/script.js"></script>
+<script>
+
+async function loadDailyStats(date) {
+  try {
+    const url = `/api/dashboard-stats?date=${date}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const stats = await response.json();
+
+    // Update card untuk tanggal
+    const transaksiTanggalCard = document.getElementById("transaksi-tanggal");
+    transaksiTanggalCard.innerHTML = stats.totalTransaksi
+      ? `${stats.totalTransaksi}`
+      : "0";
+
+    const pendapatanTanggalCard = document.getElementById("pendapatan-tanggal");
+    pendapatanTanggalCard.innerHTML = stats.totalPendapatan
+      ? `${formatRupiah(stats.totalPendapatan)}`
+      : "0";
+  } catch (error) {
+    console.error("Error:", error);
+
+    // Jika terjadi kesalahan, set nilai default ke 0
+    const transaksiTanggalCard = document.getElementById("transaksi-tanggal");
+    transaksiTanggalCard.innerHTML = "0";
+
+    const pendapatanTanggalCard = document.getElementById("pendapatan-tanggal");
+    pendapatanTanggalCard.innerHTML = "0";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const dateInput = document.getElementById("date-select");
+
+  // Set default tanggal hari ini
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+  dateInput.value = today;
+
+  // Load daily stats with today's date
+  loadDailyStats(today);
+
+  // Event untuk tanggal
+  dateInput.addEventListener("change", () => {
+    const selectedDate = dateInput.value;
+    if (selectedDate) {
+      loadDailyStats(selectedDate);
+    }
+  });
+
+  // User info display
+  const nama_lengkap = getCookieValue("nama_lengkap");
+  if (nama_lengkap) {
+    document.getElementById(
+      "nama_lengkap"
+    ).textContent = ` Selamat datang, ${nama_lengkap}`;
+  } else {
+    document.getElementById("nama_lengkap").textContent = "Anonymous";
+  }
+
+  const role = getCookieValue("role");
+  if (role) {
+    document.getElementById(
+      "role"
+    ).textContent = ` Saat ini anda login dengan role ${role}`;
+  } else {
+    document.getElementById("role").textContent = "Anonymous";
+  }
+});
+
+function getCookieValue(cookieName) {
+  const cookies = document.cookie.split("; ");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const [key, value] = cookies[i].split("=");
+    if (key === cookieName) {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
+}
+
+function handleLogout(event) {
+  event.preventDefault();
+
+  if (confirm("Apakah Anda yakin ingin logout?")) {
+    try {
+      fetch("/api/logout", {
+        method: "GET",
+        credentials: "include",
+      }).then((response) => {
+        if (response.ok) {
+          window.location.href = "/login";
+        } else {
+          alert("Gagal logout. Silakan coba lagi.");
+        }
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Terjadi kesalahan saat logout");
+    }
+  }
+}
+
+function formatRupiah(angka) {
+  let number_string = angka.toString();
+  let sisa = number_string.length % 3;
+  let rupiah = number_string.substr(0, sisa);
+  let ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+  if (ribuan) {
+    let separator = sisa ? "." : "";
+    rupiah += separator + ribuan.join(".");
+  }
+
+  return "Rp " + rupiah;
+}
+
+
+</script>
 
 </body>
 </html>

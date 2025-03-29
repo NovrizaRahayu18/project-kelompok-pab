@@ -117,6 +117,7 @@ a:hover {
 .judul-konten {
     display: flex;
     margin-bottom: 25px;
+    justify-content: center;
 }
 
 .bulan,
