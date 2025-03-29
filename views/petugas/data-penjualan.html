@@ -159,9 +159,6 @@ const resetFilter = () => {
     document.getElementById('startDate').value = '';
     document.getElementById('endDate').value = '';
     
-    // Update filter status
-    document.getElementById('filterStatus').textContent = 'Tidak ada filter aktif';
-    
     // Reload data without filters
     loadDataPenjualan();
 };
@@ -199,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 };
 
-    document.addEventListener('DOMContentLoaded', loadDataPenjualan);
+    // document.addEventListener('DOMContentLoaded', loadDataPenjualan);
 
 async function handleLogout(event) {
     event.preventDefault();
