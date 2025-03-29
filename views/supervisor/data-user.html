@@ -35,7 +35,10 @@
 
     <div class="konten">
         <div class="isi-konten">
-            <div class="con-button"><button class="btn tambah" onclick="window.location.href='/supervisor/tambah-user.html'"> + Tambah</button></div>
+            <div class="con-button">
+                <button class="btn tambah" onclick="window.location.href='/supervisor/tambah-user.html'"> + Tambah</button>
+                <input type="text" id="search" placeholder="Cari berdasarkan username atau nama lengkap ..." onkeyup="loadDataUser()">
+            </div>
             <table border="1">
                 <thead>
                     <tr>
@@ -67,10 +70,13 @@ let totalPages = 0;
 
 const loadDataUser = async (page = 0) => {
     try {
-        const response = await fetch(`/api/user?page=${page}&limit=9&accessRole=supervisor`);
+        const searchValue = document.getElementById('search').value; // Ambil nilai input search
+        const response = await fetch(`/api/user?page=${page}&limit=9&accessRole=supervisor&search=${encodeURIComponent(searchValue)}`);
+        
         if (!response.ok) {
             throw new Error('Gagal mengambil data user');
         }
+        
         const data = await response.json();
 
         totalPages = data.totalPages;
@@ -78,7 +84,6 @@ const loadDataUser = async (page = 0) => {
 
         const tableBody = document.getElementById('data_user');
         tableBody.innerHTML = ''; // Clear existing data
-
 
         data.result.forEach((user, index) => {
             const row = document.createElement('tr');
@@ -119,6 +124,7 @@ const changePage = (page) => {
     if (page < 0 || page >= totalPages) return;
     loadDataUser(page);
 };
+
 
 // Function to handle delete
 const deleteUser = async (id) => {

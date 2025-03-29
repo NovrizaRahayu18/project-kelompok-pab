@@ -1,17 +1,27 @@
 import User from "../models/UserModel.js";
 import bcrypt from "bcrypt";
+import { Op } from "sequelize";
 
 export const getUser = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 0;
     const limit = parseInt(req.query.limit) || 9;
     const offset = limit * page;
-    const accessRole = req.query.accessRole || "admin"; // Default accessRole adalah admin
+    const accessRole = req.query.accessRole || "admin";
+    const search = req.query.search || ""; // Ambil query pencarian dari frontend
 
     // Filter untuk supervisor (hanya melihat role "petugas")
     let whereClause = {};
     if (accessRole === "supervisor") {
-      whereClause = { role: "petugas" };
+      whereClause.role = "petugas";
+    }
+
+    // Tambahkan pencarian jika search query ada
+    if (search) {
+      whereClause[Op.or] = [
+        { nama_lengkap: { [Op.like]: `%${search}%` } }, // Pencarian nama_lengkap
+        { username: { [Op.like]: `%${search}%` } }, // Pencarian username
+      ];
     }
 
     const totalRows = await User.count({ where: whereClause });
