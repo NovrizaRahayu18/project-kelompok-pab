@@ -194,6 +194,44 @@
     } catch (error) {
         console.error('Error:', error);
     }
+    // ini untuk manggil bagian card barang
+    updateDashboard();
+}
+
+async function updateDashboard() {
+    try {
+        // Fetch all barang data to count total items and sum stock
+        const barangResponse = await fetch('/api/barang?all=true');
+        const barangData = await barangResponse.json();
+        
+        // Count total items
+        const totalBarang = barangData.result.length;
+        
+        // Sum all stock
+        const totalStok = barangData.result.reduce((sum, item) => sum + parseInt(item.stok || 0), 0);
+        
+        // Update the DOM elements for barang
+        document.getElementById('jmlh-brg').textContent = `${totalBarang}`;
+        document.getElementById('total-stok').textContent = `${totalStok}`;
+        
+        // Fetch all barang masuk data to count transactions and sum total incoming items
+        const barangMasukResponse = await fetch('/api/barang-masuk?limit=9999');
+        const barangMasukData = await barangMasukResponse.json();
+        
+        // Count total transactions
+        const totalTransaksi = barangMasukData.result.length;
+        
+        // Sum all incoming items (assuming there's a 'jumlah' field in each transaction)
+        const totalBarangMasuk = barangMasukData.result.reduce((sum, transaction) => sum + parseInt(transaction.jumlah || 0), 0);
+        
+        // Update the DOM elements for barang masuk
+        document.getElementById('transaksi-brg-masuk').textContent = `${totalTransaksi}`;
+        document.getElementById('total-brg-masuk').textContent = `${totalBarangMasuk}`;
+        
+        console.log('Dashboard updated successfully');
+    } catch (error) {
+        console.error('Error updating dashboard:', error);
+    }
 }
 
 // Function untuk mengkonversi nama bulan menjadi angka
