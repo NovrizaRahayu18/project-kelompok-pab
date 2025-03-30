@@ -86,7 +86,7 @@ a:hover {
 .isi-konten {
     background-color: #FF1493;
     width: 95%;
-    height: 120px;
+    height: 200px;
     margin: 30px auto 0px;
     border-radius: 5px;
     text-align: center;
@@ -95,6 +95,10 @@ a:hover {
     align-content: center;
     justify-content: center;
     padding: 20px;
+}
+
+.owner {
+    height: 120px;
 }
 
 .welcome {
