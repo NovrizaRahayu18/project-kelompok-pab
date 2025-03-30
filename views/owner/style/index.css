@@ -86,8 +86,8 @@ a:hover {
 .isi-konten {
     background-color: #FF1493;
     width: 95%;
-    height: 200px;
-    margin: 30px auto;
+    height: 120px;
+    margin: 30px auto 0px;
     border-radius: 5px;
     text-align: center;
     display: flex;
@@ -116,17 +116,21 @@ a:hover {
 
 .judul-konten {
     display: flex;
-    margin-bottom: 25px;
+    margin-top: 25px;
 }
 
 .bulan,
-.harian {
+.harian,
+.brg,
+.brg-masuk {
     width: 50%;
     text-align: center;
 }
 
 .judul-bulan,
-.judul-harian {
+.judul-harian,
+.judul-brg,
+.judul-brg-masuk {
     font-size: 25px;
     font-weight: bold;
     margin-bottom: 5px;
@@ -189,8 +193,6 @@ select:focus {
     padding: 1rem;
     width: 90%;
     margin: 0 auto;
-    margin-top: 20px;
-
 }
 
 .card-dash {
@@ -220,7 +222,11 @@ select:focus {
 #transaksi-bulan,
 #pendapatan-bulan,
 #transaksi-tanggal,
-#pendapatan-tanggal {
+#pendapatan-tanggal,
+#jmlh-brg,
+#transaksi-brg-masuk,
+#total-stok,
+#total-brg-masuk {
     font-size: 1.5rem;
     color: #007bff;
     /* Warna biru untuk angka */
