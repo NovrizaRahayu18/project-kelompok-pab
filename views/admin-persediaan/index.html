@@ -37,40 +37,98 @@
             <p class="welcome" id="nama_lengkap"></p>
             <p class="isi-welcome" id="role">Saat ini anda login dengan role </p>
         </div>
+
+        <div class="judul-konten">
+            <div class="brg">
+                <p class="judul-brg">Total Barang</p>
+                <div class="con-card barang">
+                <div class="card-dash">
+                    <div class="card-title">
+                    <h3>Jumlah Barang</h3>
+                    <h3 id="jmlh-brg">0</h3>
+                    </div>
+                </div>
+
+                <div class="card-dash">
+                    <div class="card-title">
+                    <h3>Total Stok</h3>
+                    <h3 id="total-stok">0</h3>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="brg-masuk">
+                <p class="judul-brg-masuk">Total Barang Masuk</p>
+                <div class="con-card barang">
+                <div class="card-dash">
+                    <div class="card-title">
+                    <h3>Transaksi Brg Masuk</h3>
+                    <h3 id="transaksi-brg-masuk">0</h3>
+                    </div>
+                </div>
+
+                <div class="card-dash">
+                    <div class="card-title">
+                    <h3>Total Barang Masuk</h3>
+                    <h3 id="total-brg-masuk">0</h3>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 <script>
 
-
 function getCookieValue(cookieName) {
-            const cookies = document.cookie.split('; ');
-            
-            for (let i = 0; i < cookies.length; i++) {
-                const [key, value] = cookies[i].split('=');
-                if (key === cookieName) {
-                    return decodeURIComponent(value); 
-                }
-            }
-            return null;
-        }
-
-        const username = getCookieValue('nama_lengkap');
-        console.log(username)
+    const cookies = document.cookie.split('; ');
     
-        if (username) {
-            document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${username}`;
-        } else {
-            document.getElementById('nama_lengkap').textContent = 'Anonymous';
+    for (let i = 0; i < cookies.length; i++) {
+        const [key, value] = cookies[i].split('=');
+        if (key === cookieName) {
+            return decodeURIComponent(value); 
         }
+    }
+    return null;
+}
 
-        const role = getCookieValue('role');
-        console.log(role)
-
-        if (role) {
-            document.getElementById('role').textContent =` Saat ini anda login dengan role ${role}`;
-        } else {
-            document.getElementById('role').textContent = 'Anonymous';
-        }
+async function updateDashboard() {
+    try {
+        // Fetch all barang data to count total items and sum stock
+        const barangResponse = await fetch('/api/barang?all=true');
+        const barangData = await barangResponse.json();
+        
+        // Count total items
+        const totalBarang = barangData.result.length;
+        
+        // Sum all stock
+        const totalStok = barangData.result.reduce((sum, item) => sum + parseInt(item.stok || 0), 0);
+        
+        // Update the DOM elements for barang
+        document.getElementById('jmlh-brg').textContent = `${totalBarang}`;
+        document.getElementById('total-stok').textContent = `${totalStok}`;
+        
+        // Fetch all barang masuk data to count transactions and sum total incoming items
+        const barangMasukResponse = await fetch('/api/barang-masuk?limit=9999');
+        const barangMasukData = await barangMasukResponse.json();
+        
+        // Count total transactions
+        const totalTransaksi = barangMasukData.result.length;
+        
+        // Sum all incoming items (assuming there's a 'jumlah' field in each transaction)
+        const totalBarangMasuk = barangMasukData.result.reduce((sum, transaction) => sum + parseInt(transaction.jumlah || 0), 0);
+        
+        // Update the DOM elements for barang masuk
+        document.getElementById('transaksi-brg-masuk').textContent = `${totalTransaksi}`;
+        document.getElementById('total-brg-masuk').textContent = `${totalBarangMasuk}`;
+        
+        console.log('Dashboard updated successfully');
+    } catch (error) {
+        console.error('Error updating dashboard:', error);
+    }
+}
 
 async function handleLogout(event) {
     event.preventDefault();
@@ -96,7 +154,30 @@ async function handleLogout(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Halaman telah dimuat sepenuhnya.');
+    
+    // Set user information from cookies
+    const username = getCookieValue('nama_lengkap');
+    console.log(username);
+    
+    if (username) {
+        document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${username}`;
+    } else {
+        document.getElementById('nama_lengkap').textContent = 'Anonymous';
+    }
+
+    const role = getCookieValue('role');
+    console.log(role);
+
+    if (role) {
+        document.getElementById('role').textContent = ` Saat ini anda login dengan role ${role}`;
+    } else {
+        document.getElementById('role').textContent = 'Anonymous';
+    }
+    
+    // Update dashboard data
+    updateDashboard();
 });
+
 </script>
 
 </body>
