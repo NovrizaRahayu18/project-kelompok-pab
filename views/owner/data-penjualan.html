@@ -78,27 +78,47 @@ document.getElementById('printButton').addEventListener('click', () => {
             window.print();
         });
 
-let currentPage = 0;
-let totalPages = 0;
+// Add event listeners for date inputs
+document.getElementById('startDate').addEventListener('change', applyDateFilter);
+document.getElementById('endDate').addEventListener('change', applyDateFilter);
 
+// Fungsi untuk menerapkan filter tanggal
+function applyDateFilter() {
+    // Reset ke halaman pertama saat menerapkan filter
+    currentPage = 0;
+    loadDataPenjualan();
+}
+
+// Fungsi reset filter
+function resetFilter() {
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    currentPage = 0;
+    loadDataPenjualan();
+}
+
+// Update fungsi loadDataPenjualan untuk menyertakan parameter filter tanggal
 const loadDataPenjualan = async (page = 0) => {
     try {
-        // Get start and end dates from input
-        const startDateInput = document.getElementById('startDate');
-        const endDateInput = document.getElementById('endDate');
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
         
-        // Construct URL with optional date filtering
         let url = `/api/penjualan?page=${page}&limit=9`;
-        if (startDateInput.value && endDateInput.value) {
-            url += `&startDate=${startDateInput.value}&endDate=${endDateInput.value}`;
+        
+        // Tambahkan parameter tanggal jika ada
+        if (startDate) {
+            url += `&startDate=${startDate}`;
         }
-
+        if (endDate) {
+            url += `&endDate=${endDate}`;
+        }
+        
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error('Gagal mengambil data penjualan');
         }
         const data = await response.json();
-
+        
         totalPages = data.totalPages;
         currentPage = data.page;
         
@@ -128,9 +148,8 @@ const loadDataPenjualan = async (page = 0) => {
                 tableBody.appendChild(row);
             });
         }
-
+        
         updatePagination();
-        // updateFilterStatus();
     } catch (error) {
         console.error('Error:', error);
         alert('Gagal memuat data penjualan');
@@ -153,19 +172,6 @@ const changePage = (page) => {
     if (page < 0 || page >= totalPages) return;
     loadDataPenjualan(page);
 };
-
-const resetFilter = () => {
-    // Reset date inputs
-    document.getElementById('startDate').value = '';
-    document.getElementById('endDate').value = '';
-    
-    // Reload data without filters
-    loadDataPenjualan();
-};
-
-// Add event listeners for filtering
-document.getElementById('startDate').addEventListener('change', () => loadDataPenjualan());
-document.getElementById('endDate').addEventListener('change', () => loadDataPenjualan());
 
 // Initial load
 document.addEventListener('DOMContentLoaded', () => {

@@ -12,20 +12,32 @@ export const getPenjualan = async (req, res) => {
     const limit = parseInt(req.query.limit) || 9;
     const offset = limit * page;
 
-    // Add date filtering
-    const { startDate, endDate } = req.query;
+    // Ambil parameter tanggal dari query
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
 
-    // Prepare where conditions for filtering
-    const whereCondition = {};
-    if (startDate && endDate) {
-      whereCondition.tanggal_penjualan = {
-        [Op.between]: [new Date(startDate), new Date(endDate)],
-      };
+    // Buat where clause untuk filter tanggal
+    let whereClause = {};
+    if (startDate || endDate) {
+      whereClause.tanggal_penjualan = {};
+
+      // Jika ada startDate, tambahkan kondisi >= startDate
+      if (startDate) {
+        whereClause.tanggal_penjualan[Op.gte] = new Date(startDate);
+      }
+
+      // Jika ada endDate, tambahkan kondisi <= endDate (set ke akhir hari)
+      if (endDate) {
+        // Set waktu ke 23:59:59 untuk mencakup seluruh hari
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        whereClause.tanggal_penjualan[Op.lte] = endOfDay;
+      }
     }
 
-    // Count total rows with filtering
+    // Hitung total rows berdasarkan filter
     const totalRows = await Penjualan.count({
-      where: whereCondition,
+      where: whereClause,
     });
     const totalPages = Math.ceil(totalRows / limit);
 
@@ -37,7 +49,7 @@ export const getPenjualan = async (req, res) => {
         "uang_bayar",
         "kembalian",
       ],
-      where: whereCondition,
+      where: whereClause,
       offset: offset,
       limit: limit,
       order: [["tanggal_penjualan", "DESC"]],
@@ -218,8 +230,6 @@ export const createPenjualan = async (req, res) => {
         res.status(400).json({ msg: error.message });
     }
 }
-
-
 
 export const deletePenjualan = async (req, res) => {
     const t = await db.transaction();
