@@ -142,18 +142,6 @@ const changePage = (page) => {
     loadDataPenjualan(page);
 };
 
-// const updateFilterStatus = () => {
-//     const filterStatusElement = document.getElementById('filterStatus');
-//     const startDateInput = document.getElementById('startDate');
-//     const endDateInput = document.getElementById('endDate');
-    
-//     if (startDateInput.value && endDateInput.value) {
-//         filterStatusElement.textContent = `Filter: ${startDateInput.value} s/d ${endDateInput.value}`;
-//     } else {
-//         filterStatusElement.textContent = 'Tidak ada filter aktif';
-//     }
-// };
-
 const resetFilter = () => {
     // Reset date inputs
     document.getElementById('startDate').value = '';
@@ -176,27 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `/petugas/data-detail-penjualan.html?id=${id}`;
     };
 
-    const deletePenjualan = async (id) => {
-    if (confirm('Apakah Anda yakin ingin menghapus Data Penjualan ini?')) {
-        try {
-            const response = await fetch(`/api/penjualan/${id}`, {
-                method: 'DELETE'
-            });
-            
-            if (response.ok) {
-                alert('Penjualan berhasil dihapus');
-                loadDataPenjualan(); 
-            } else {
-                alert('Gagal menghapus penjualan');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus penjualan');
-        }
-    }
-};
-
-    // document.addEventListener('DOMContentLoaded', loadDataPenjualan);
 
 async function handleLogout(event) {
     event.preventDefault();
