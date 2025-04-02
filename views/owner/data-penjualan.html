@@ -78,6 +78,20 @@ document.getElementById('printButton').addEventListener('click', () => {
             window.print();
         });
 
+const formatDate = (dateString) => {
+    // Pecah string berdasarkan tanda "-"
+    const parts = dateString.split("-");
+    
+    // Pastikan formatnya benar sebelum memproses
+    if (parts.length !== 3) return "Invalid Date";
+
+    const day = parts[0];
+    const month = parts[1];
+    const year = parts[2];
+
+    return `${month}-${day}-${year}`;
+};
+
 // Add event listeners for date inputs
 document.getElementById('startDate').addEventListener('change', applyDateFilter);
 document.getElementById('endDate').addEventListener('change', applyDateFilter);
@@ -136,7 +150,7 @@ const loadDataPenjualan = async (page = 0) => {
                 row.innerHTML = `
                     <td>${(currentPage * 9) + index + 1}</td>
                     <td class="tengah">${penjualan.id_penjualan}</td>
-                    <td>${penjualan.tanggal_penjualan}</td>
+                    <td class="tengah">${formatDate(penjualan.tanggal_penjualan)}</td>
                     <td class="kanan">${penjualan.total_harga}</td>
                     <td class="kanan">${penjualan.uang_bayar}</td>
                     <td class="kanan">${penjualan.kembalian}</td>
