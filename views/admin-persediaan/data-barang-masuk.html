@@ -124,7 +124,7 @@ const loadDataBarangMasuk = async (page = 0) => {
         if (data.result.length === 0) {
             // Tampilkan pesan jika tidak ada data yang ditemukan
             const emptyRow = document.createElement('tr');
-            emptyRow.innerHTML = `<td colspan="7" style="text-align: center;">Tidak ada data dalam rentang tanggal yang dipilih</td>`;
+            emptyRow.innerHTML = `<td colspan="7" style="text-align: center; font-style: italic;">Tidak ada data dalam rentang tanggal yang dipilih</td>`;
             tableBody.appendChild(emptyRow);
         } else {
             data.result.forEach((item, index) => {

@@ -85,7 +85,13 @@ const loadDataUser = async (page = 0) => {
         const tableBody = document.getElementById('data_user');
         tableBody.innerHTML = ''; // Clear existing data
 
-        data.result.forEach((user, index) => {
+        if (data.result.length === 0) {
+            // Tampilkan pesan jika tidak ada data yang ditemukan
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = `<td colspan="7" style="text-align: center; font-style: italic;">Tidak ada user yang ditemukan</td>`;
+            tableBody.appendChild(emptyRow);
+        } else {
+            data.result.forEach((user, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${(currentPage * 9) + index + 1}</td>
@@ -101,6 +107,7 @@ const loadDataUser = async (page = 0) => {
             `;
             tableBody.appendChild(row);
         });
+        }
 
         updatePagination();
     } catch (error) {

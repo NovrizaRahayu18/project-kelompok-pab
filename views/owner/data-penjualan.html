@@ -105,22 +105,29 @@ const loadDataPenjualan = async (page = 0) => {
         const tableBody = document.getElementById('data_penjualan');
         tableBody.innerHTML = '';
         
-        data.result.forEach((penjualan, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${(currentPage * 9) + index + 1}</td>
-                <td class="tengah">${penjualan.id_penjualan}</td>
-                <td>${penjualan.tanggal_penjualan}</td>
-                <td class="kanan">${penjualan.total_harga}</td>
-                <td class="kanan">${penjualan.uang_bayar}</td>
-                <td class="kanan">${penjualan.kembalian}</td>
-                <td>
-                    <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
-                    <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
+        if (data.result.length === 0) {
+            // Tampilkan pesan jika tidak ada data yang ditemukan
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = `<td colspan="7" style="text-align: center; font-style: italic;">Tidak ada data dalam rentang tanggal yang dipilih</td>`;
+            tableBody.appendChild(emptyRow);
+        } else {
+            data.result.forEach((penjualan, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${(currentPage * 9) + index + 1}</td>
+                    <td class="tengah">${penjualan.id_penjualan}</td>
+                    <td>${penjualan.tanggal_penjualan}</td>
+                    <td class="kanan">${penjualan.total_harga}</td>
+                    <td class="kanan">${penjualan.uang_bayar}</td>
+                    <td class="kanan">${penjualan.kembalian}</td>
+                    <td>
+                        <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
+                        <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
 
         updatePagination();
         // updateFilterStatus();
