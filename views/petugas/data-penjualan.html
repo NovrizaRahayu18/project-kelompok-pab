@@ -54,6 +54,7 @@
                         <th>Total Harga</th>
                         <th>Uang Bayar</th>
                         <th>Kembalian</th>
+                        <th>Kasir</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -138,7 +139,7 @@ const loadDataPenjualan = async (page = 0) => {
         if (data.result.length === 0) {
             // Tampilkan pesan jika tidak ada data yang ditemukan
             const emptyRow = document.createElement('tr');
-            emptyRow.innerHTML = `<td colspan="7" style="text-align: center; font-style: italic;">Tidak ada data dalam rentang tanggal yang dipilih</td>`;
+            emptyRow.innerHTML = `<td colspan="8" style="text-align: center; font-style: italic;">Tidak ada data dalam rentang tanggal yang dipilih</td>`;
             tableBody.appendChild(emptyRow);
         } else {
             data.result.forEach((penjualan, index) => {
@@ -150,9 +151,9 @@ const loadDataPenjualan = async (page = 0) => {
                     <td class="kanan">${penjualan.total_harga}</td>
                     <td class="kanan">${penjualan.uang_bayar}</td>
                     <td class="kanan">${penjualan.kembalian}</td>
+                    <td class="tengah">${penjualan.username}</td>
                     <td>
                         <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
-                        <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button>
                     </td>
                 `;
                 tableBody.appendChild(row);

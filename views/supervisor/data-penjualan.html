@@ -149,6 +149,7 @@ const loadDataPenjualan = async (page = 0) => {
                     <td class="kanan">${penjualan.total_harga}</td>
                     <td class="kanan">${penjualan.uang_bayar}</td>
                     <td class="kanan">${penjualan.kembalian}</td>
+                    <td class="tengah">${penjualan.username}</td>
                     <td>
                         <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
                         <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button>

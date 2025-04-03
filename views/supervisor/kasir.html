@@ -277,8 +277,6 @@ async function savePenjualan() {
         return;
     }
 
-    
-
     const data = {
         tanggal_penjualan: new Date().toISOString(),
         total_harga: total,
@@ -298,6 +296,7 @@ async function savePenjualan() {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(data)
         });
 
