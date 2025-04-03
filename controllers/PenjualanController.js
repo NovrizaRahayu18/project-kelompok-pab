@@ -1,6 +1,7 @@
 import Penjualan from "../models/PenjualanModel.js";
 import DetailPenjualan from "../models/DetailPenjualanModel.js";
 import Barang from "../models/BarangModel.js";
+import User from "../models/UserModel.js";
 import db from "../config/Database.js";
 import moment from 'moment';
 import { Op } from "sequelize";
@@ -48,11 +49,22 @@ export const getPenjualan = async (req, res) => {
         "total_harga",
         "uang_bayar",
         "kembalian",
+        "id_user"
+      ],
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["username"]
+        }
       ],
       where: whereClause,
       offset: offset,
       limit: limit,
-      order: [["tanggal_penjualan", "DESC"]],
+      order: [
+        ["id_penjualan", "DESC"],
+        ["tanggal_penjualan", "DESC"]
+      ],
     });
 
     const formattedResponse = response.map((item) => ({
@@ -70,6 +82,8 @@ export const getPenjualan = async (req, res) => {
         style: "currency",
         currency: "IDR",
       }).format(item.kembalian),
+      id_user: item.id_user,
+      username: item.user ? item.user.username : 'Tidak Ada'
     }));
 
     res.status(200).json({
@@ -175,56 +189,69 @@ export const getDetailPenjualan = async(req, res) => {
 }
 
 
-
 export const createPenjualan = async (req, res) => {
     const t = await db.transaction();
     
     try {
-        const { tanggal_penjualan, total_harga, uang_bayar, kembalian, items } = req.body;
-        const tanggalFormat = moment(tanggal_penjualan).format("YYYY-MM-DD");
+      if (!req.user || !req.user.id) {
+        return res
+          .status(401)
+          .json({ msg: "Unauthorized: User tidak ditemukan" });
+      }
 
-        //  Create penjualan header
-        const penjualan = await Penjualan.create({
-            tanggal_penjualan: tanggalFormat,
-            total_harga,
-            uang_bayar,
-            kembalian
-        }, { transaction: t });
+      const id_user = req.user.id; // Mengambil id_user dari req.user (dari middleware)
+      const { tanggal_penjualan, total_harga, uang_bayar, kembalian, items } = req.body;
+      const tanggalFormat = moment(tanggal_penjualan).format("YYYY-MM-DD");
 
-        // Create detail penjualan dan update stok
-        for (const item of items) {
-            // Cek stok tersedia
-            const barang = await Barang.findOne({
-                where: { id_barang: item.id_barang },
-                transaction: t
-            });
+      //  Create penjualan header
+      const penjualan = await Penjualan.create(
+        {
+          tanggal_penjualan: tanggalFormat,
+          total_harga,
+          uang_bayar,
+          kembalian,
+          id_user,
+        },
+        { transaction: t }
+      );
 
-            if (barang.stok < item.jumlah) {
-                throw new Error(`Stok ${barang.nama_barang} tidak mencukupi`);
-            }
+      // Create detail penjualan dan update stok
+      for (const item of items) {
+        // Cek stok tersedia
+        const barang = await Barang.findOne({
+          where: { id_barang: item.id_barang },
+          transaction: t,
+        });
 
-            //  Create detail penjualan
-            await DetailPenjualan.create({
-                id_penjualan: penjualan.id_penjualan,
-                id_barang: item.id_barang,
-                jumlah: item.jumlah,
-                harga_satuan: item.harga_satuan,
-                subtotal: item.jumlah * item.harga_satuan  // Fix: use harga_satuan instead of harga_jual
-            }, { transaction: t });
-
-            //  Update stok barang
-            await Barang.decrement('stok', {
-                by: item.jumlah,
-                where: { id_barang: item.id_barang },
-                transaction: t
-            });
+        if (barang.stok < item.jumlah) {
+          throw new Error(`Stok ${barang.nama_barang} tidak mencukupi`);
         }
 
-        await t.commit();
-        res.status(201).json({
-            msg: "Penjualan berhasil ditambahkan",
-            data: penjualan
+        //  Create detail penjualan
+        await DetailPenjualan.create(
+          {
+            id_penjualan: penjualan.id_penjualan,
+            id_barang: item.id_barang,
+            jumlah: item.jumlah,
+            harga_satuan: item.harga_satuan,
+            subtotal: item.jumlah * item.harga_satuan, // Fix: use harga_satuan instead of harga_jual
+          },
+          { transaction: t }
+        );
+
+        //  Update stok barang
+        await Barang.decrement("stok", {
+          by: item.jumlah,
+          where: { id_barang: item.id_barang },
+          transaction: t,
         });
+      }
+
+      await t.commit();
+      res.status(201).json({
+        msg: "Penjualan berhasil ditambahkan",
+        data: penjualan,
+      });
     } catch (error) {
         await t.rollback();
         res.status(400).json({ msg: error.message });
