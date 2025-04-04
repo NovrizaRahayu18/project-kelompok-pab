@@ -105,7 +105,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         if (response.ok) {
             const result = await response.json();
             alert('Berhasil Update User'); 
-            window.location.href = '/owner/data-user.html'; 
+            window.location.href = '/supervisor/data-user.html'; 
         } else {
             const error = await response.json();
             alert(error.msg || 'Gagal Mengupdate user');
