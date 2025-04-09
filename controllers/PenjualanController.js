@@ -55,15 +55,15 @@ export const getPenjualan = async (req, res) => {
         {
           model: User,
           as: "user",
-          attributes: ["username"]
+          attributes: ["nama_lengkap"]
         }
       ],
       where: whereClause,
       offset: offset,
       limit: limit,
       order: [
-        ["id_penjualan", "DESC"],
-        ["tanggal_penjualan", "DESC"]
+        ["tanggal_penjualan", "DESC"],
+        ["id_penjualan", "DESC"]
       ],
     });
 
@@ -83,7 +83,7 @@ export const getPenjualan = async (req, res) => {
         currency: "IDR",
       }).format(item.kembalian),
       id_user: item.id_user,
-      username: item.user ? item.user.username : 'Tidak Ada'
+      nama_lengkap: item.user ? item.user.nama_lengkap : 'Tidak Ada'
     }));
 
     res.status(200).json({
