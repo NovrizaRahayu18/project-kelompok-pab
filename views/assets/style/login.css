@@ -20,7 +20,7 @@ form {
     width: 250px;
     margin: 60px auto;
 }
-h1 {
+h1, h2 {
     margin: 10px;
     text-align: center;
     font-weight: bolder;
