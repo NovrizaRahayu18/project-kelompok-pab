@@ -34,7 +34,8 @@
     <div class="konten">
         <div class="isi-konten">
             <div class="con-button">
-                <button class="btn tambah" onclick="window.location.href='/owner/tambah-data-barang-masuk.html'"> + Tambah</button>
+                <!-- <button class="btn tambah" onclick="window.location.href='/owner/tambah-data-barang-masuk.html'"> + Tambah</button> -->
+                <button id="printButton" class="btn print">Print Halaman</button>
                 <div class="filter-container">
                     <div class="date-filter">
                         <label for="startDate">Dari Tanggal:</label>
@@ -54,7 +55,7 @@
                         <th>Tanggal Masuk</th>
                         <th>Stok</th>
                         <th>Keterangan</th>
-                        <th>Aksi</th>
+                        <!-- <th>Aksi</th> -->
                     </tr>
                 </thead>
                 <tbody id="data_barang_masuk">
@@ -71,6 +72,10 @@
 </div>
 
 <script>
+
+document.getElementById('printButton').addEventListener('click', () => {
+    window.print();
+});
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -139,10 +144,12 @@ const loadDataBarangMasuk = async (page = 0) => {
                     <td class="tengah">${formatDate(item.tanggal_masuk)}</td>
                     <td class="tengah">${item.jumlah}</td>
                     <td>${item.keterangan || '-'}</td>
+                    <!--
                     <td>
                         <button class="btn edit" onclick="editBarangMasuk(${item.id_barang_masuk})">Edit</button>
                         <button class="btn delete" onclick="deleteBarangMasuk(${item.id_barang_masuk})">Hapus</button>
                     </td>
+                    -->
                 `;
                 tableBody.appendChild(row);
             });
@@ -159,7 +166,7 @@ const updatePagination = () => {
     
     let paginationHTML = `
         <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
-        <span>Page ${currentPage + 1} of ${totalPages}</span>
+        <span class="hilang">Page ${currentPage + 1} of ${totalPages}</span>
         <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
     `;
     
@@ -198,9 +205,9 @@ const editBarangMasuk = (id) => {
     window.location.href = `/owner/edit-data-barang-masuk.html?id=${id}`;
 };
 
-document.querySelector('.btn.tambah').addEventListener('click', () => {
-    window.location.href = '/owner/tambah-data-barang-masuk.html';
-});
+// document.querySelector('.btn.tambah').addEventListener('click', () => {
+//     window.location.href = '/owner/tambah-data-barang-masuk.html';
+// });
 
 document.addEventListener('DOMContentLoaded', loadDataBarangMasuk);
 

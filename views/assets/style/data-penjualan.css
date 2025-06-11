@@ -185,9 +185,9 @@ td:first-child {
     opacity: 0.8;
 }
 
-/* .tengah {
+.tengah {
     text-align: center;
-} */
+}
 
 /* .kanan {
     text-align: right;
@@ -223,6 +223,26 @@ td:first-child {
         display: none;
     }
 
+    .btn.reset {
+        display: none;
+    }
+
+    .pagination button {
+        display: none;
+    }
+    
+    .hilang {
+        display: none;
+    }
+
+     th.aksi {
+        display: none;
+    }
+
+    td .btn.detail {
+        display: none;
+    }
+    
 }
 
 .pagination {
@@ -267,4 +287,8 @@ td:first-child {
 label {
     font-size: 15px;
     font-weight: bold;
+}
+
+.aksi {
+    text-align: center;
 }

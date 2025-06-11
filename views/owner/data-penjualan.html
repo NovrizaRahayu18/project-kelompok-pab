@@ -49,14 +49,14 @@
             <table border="1">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th class="tengah">No</th>
                         <th>ID Penjualan</th>
                         <th>Tanggal</th>
                         <th>Total Harga</th>
                         <th>Uang Bayar</th>
                         <th>Kembalian</th>
                         <th>Kasir</th>
-                        <th>Aksi</th>
+                        <th class="aksi">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="data_penjualan">
@@ -151,15 +151,15 @@ const loadDataPenjualan = async (page = 0) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${(currentPage * 9) + index + 1}</td>
-                    <td class="tengah">${penjualan.id_penjualan}</td>
-                    <td class="tengah">${formatDate(penjualan.tanggal_penjualan)}</td>
-                    <td class="kanan">${penjualan.total_harga}</td>
-                    <td class="kanan">${penjualan.uang_bayar}</td>
-                    <td class="kanan">${penjualan.kembalian}</td>
-                    <td class="tengah">${penjualan.nama_lengkap}</td>
+                    <td>${penjualan.id_penjualan}</td>
+                    <td>${formatDate(penjualan.tanggal_penjualan)}</td>
+                    <td>${penjualan.total_harga}</td>
+                    <td>${penjualan.uang_bayar}</td>
+                    <td>${penjualan.kembalian}</td>
+                    <td>${penjualan.nama_lengkap}</td>
                     <td>
                         <button class="btn detail" onclick="showDetail(${penjualan.id_penjualan})">Detail</button>
-                        <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button>
+                <!--        <button class="btn delete" onclick="deletePenjualan(${penjualan.id_penjualan})">Hapus</button> -->
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -178,7 +178,7 @@ const updatePagination = () => {
     
     let paginationHTML = `
         <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
-        <span>Page ${currentPage + 1} of ${totalPages}</span>
+        <span class="hilang">Page ${currentPage + 1} of ${totalPages}</span>
         <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
     `;
     

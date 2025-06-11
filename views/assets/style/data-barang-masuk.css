@@ -230,3 +230,60 @@ label {
     font-size: 15px;
     font-weight: bold;
 }
+
+@media print {
+
+    /* Sembunyikan sidebar */
+        .list {
+            display: none;
+        }
+    
+        /* Sesuaikan konten utama */
+        .content {
+            width: 100%;
+            margin: 0;
+        }
+    
+        .kembali {
+            display: none;
+        }
+    
+        #printButton {
+            display: none;
+        }
+    
+        .btn.reset {
+            display: none;
+        }
+    
+        .pagination button {
+            display: none;
+        }
+    
+        .hilang {
+            display: none;
+        }
+    
+        th.aksi {
+            display: none;
+        }
+    
+        td .btn.detail {
+            display: none;
+        }
+
+        .navigasi {
+            width: 150px;
+        }
+
+        .konten {
+            margin-left: 150px;
+            width: calc(100% - 150px);
+        }
+
+}
+
+.print {
+    background-color: #00BFFF;
+    margin-bottom: 15px;
+}

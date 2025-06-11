@@ -34,20 +34,20 @@
     <div class="konten">
         <div class="isi-konten">
             <div class="con-button">
-                <button class="btn tambah" onclick="window.location.href='/owner/tambah-barang.html'"> + Tambah</button>
+                <!-- <button class="btn tambah" onclick="window.location.href='/owner/tambah-barang.html'"> + Tambah</button> -->
                 <input type="text" id="search-bar" placeholder="Cari Barang...">
             </div>
             <table border="1">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th class="tengah">No</th>
                         <th>ID Barang</th>
                         <th>Nama Barang</th>
                         <th>Gambar</th>
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
-                        <th>Stok</th>
-                        <th>Aksi</th>
+                        <th class="tengah">Stok</th>
+                        <!-- <th>Aksi</th> -->
                     </tr>
                 </thead>
                 <tbody id="data_barang">
@@ -98,19 +98,21 @@ const loadDataBarang = async (page = 0) => {
             data.result.forEach((barang, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${(currentPage * 5) + index + 1}</td>
-                    <td class="tengah">${barang.id_barang}</td>
+                    <td class="tengah">${(currentPage * 5) + index + 1}</td>
+                    <td>${barang.id_barang}</td>
                     <td>${barang.nama_barang}</td>
-                    <td class="tengah">
+                    <td>
                         <img src="${barang.url}" alt="${barang.nama_barang}" class="gambar-barang">
                     </td>   
                     <td>${formatRupiah(barang.harga_beli)}</td>
                     <td>${formatRupiah(barang.harga_jual)}</td>
                     <td class="tengah">${barang.stok}</td>
+                    <!--
                     <td>
                         <button class="btn edit" onclick="editBarang(${barang.id_barang})">Edit</button>
                         <button class="btn delete" onclick="deleteBarang(${barang.id_barang})">Hapus</button>
                     </td>
+                    -->
                 `;
                 tableBody.appendChild(row);
             });
@@ -175,9 +177,9 @@ const editBarang = (id) => {
     window.location.href = `/owner/edit-data-barang.html?id=${id}`;
 };
 
-document.querySelector('.btn.tambah').addEventListener('click', () => {
-    window.location.href = '/owner/tambah-data-barang.html';
-});
+// document.querySelector('.btn.tambah').addEventListener('click', () => {
+//     window.location.href = '/owner/tambah-data-barang.html';
+// });
 
 document.addEventListener('DOMContentLoaded', loadDataBarang);
 
