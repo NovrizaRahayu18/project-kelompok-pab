@@ -15,7 +15,7 @@ body {
 
 .navigasi {
     width: 250px;
-    background-color: #FF1493;
+    background-color: #66bdff;
     position: fixed;
     height: 100%;
     overflow-y: auto;
@@ -84,7 +84,7 @@ a:hover {
 
 
 .isi-konten {
-    background-color: #FF1493;
+    background-color: #66bdff;
     width: 95%;
     height: 200px;
     margin: 30px auto 0px;
@@ -162,8 +162,8 @@ select:hover {
 
 select:focus {
     outline: none;
-    border-color: #FF1493;
-    box-shadow: 0 0 6px #e41282;
+    border-color: #66bdff;
+    box-shadow: 0 0 6px #66bdff;
 }
 
 #date-select {
@@ -185,7 +185,7 @@ select:focus {
 
 #date-select:focus {
     outline: none;
-    border-color: #FF1493;
+    border-color: #66bdff;
     box-shadow: 0 0 6px #e41282;
 }
 

@@ -3,7 +3,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #FF1493;
+    background: #66bdff;
 }
 .container {
     width: 55%;
@@ -27,7 +27,7 @@ h1, h2 {
     text-transform: uppercase;
 }
 hr {
-    border-top: 2px solid #FF1493;
+    border-top: 2px solid #66bdff;
 }
 p {
     text-align: center;
@@ -64,7 +64,7 @@ button {
     cursor: pointer;
     margin-top: 20px;
     border-radius: 5px;
-    background: #FF1493;
+    background: #66bdff;
 }
 button:hover {
     background:rgba (214, 86, 64, 1);

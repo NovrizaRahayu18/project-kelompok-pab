@@ -15,7 +15,7 @@ body {
 
 .navigasi {
     width: 250px;
-    background-color: #FF1493;
+    background-color: #66bdff;
     position: fixed;
     height: 100%;
     overflow-y: auto;
@@ -142,7 +142,7 @@ a:hover {
     transition: 0.3s;
     width: 200px;
     /* Lebar tetap untuk setiap kartu */
-    background-color: #FF1493;
+    background-color: #66bdff;
     border-radius: 8px;
     overflow: hidden;
     /* Agar konten tidak keluar dari batas */
@@ -215,7 +215,7 @@ a:hover {
 }
 
 .kasir-table th {
-    background-color: #FF1493;
+    background-color: #66bdff;
     color: white;
     font-weight: bold;
 }
@@ -295,7 +295,7 @@ a:hover {
 }
 
 .btn-selesai {
-    background-color: #FF1493;
+    background-color: #66bdff;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -306,7 +306,7 @@ a:hover {
 }
 
 .btn-selesai:hover {
-    background-color: #ff69b4;
+    background-color: #64ade4;
 }
 
 .kembalian-row {
@@ -326,7 +326,7 @@ a:hover {
 }
 
 #search-bar:focus {
-    border-color: #FF1493;
+    border-color: #66bdff;
     /* Ganti warna sesuai tema */
     box-shadow: 0 0 8px #c40d6f;
 }

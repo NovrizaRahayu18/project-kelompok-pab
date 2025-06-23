@@ -15,7 +15,7 @@ body {
 
 .navigasi {
     width: 250px;
-    background-color: #FF1493;
+    background-color: #66bdff;
     position: fixed;
     height: 100%;
     overflow-y: auto;
@@ -103,7 +103,7 @@ td {
 }
 
 th {
-    background-color: #FF1493;
+    background-color: #66bdff;
     color: #333;
     font-weight: bold;
     text-align: left;
@@ -221,7 +221,7 @@ td:first-child {
 }
 
 #search:focus {
-    border-color: #FF1493;
+    border-color: #66bdff;
     box-shadow: 0 0 5px #c40d6f;
 }
 
