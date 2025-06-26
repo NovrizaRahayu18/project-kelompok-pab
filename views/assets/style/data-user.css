@@ -39,7 +39,7 @@ body {
 }
 .modal-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 1rem;
 }
 
@@ -161,14 +161,7 @@ td:first-child {
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  }
-  .modal-content.active {
-    display: block;
-  }
-  .modal-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
+    text-align: center;
   }
   
 .btn {
@@ -199,6 +192,14 @@ td:first-child {
 
 .delete {
     background-color: #f44336;
+    color: white;
+    width: 60px;
+}
+
+.cancel {
+    background-color: #e7e7e7;
+    color: black;
+    width: 60px;
 }
 
 .mundur {

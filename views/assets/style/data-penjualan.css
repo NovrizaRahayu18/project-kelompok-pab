@@ -58,6 +58,7 @@ body {
 #confirmYes {
     background-color: #e53935;
     color: white;
+    width: 60px;
 }
 
 #confirmYes:hover {

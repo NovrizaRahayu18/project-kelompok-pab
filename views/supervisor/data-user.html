@@ -1,243 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zentro Store - Data User</title>
-    <link rel="stylesheet" href="/assets/style/data-user.css">
-    <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
-    <style>
-        
-    </style>
-</head>
-<body>
-    
-<div class="container">
-
-    <div class="navigasi">
+    <link rel="stylesheet" href="/assets/style/data-user.css" />
+    <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg" />
+    <style></style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="navigasi">
         <div class="judul">
-            <div class="gambar">
-                <img src="/assets/images/logo.jpg" alt="">
-            </div>
-            <h2>Zentro Store</h2>
+          <div class="gambar">
+            <img src="/assets/images/logo.jpg" alt="" />
+          </div>
+          <h2>Zentro Store</h2>
         </div>
-        
+
         <div class="list">
-            <ul>
-                <li><a href="/">Dashboard</a></li>
-                <li><a href="/supervisor/kasir.html">Kasir</a></li>
-                <li><a href="/supervisor/data-penjualan.html">Data Penjualan</a></li>
-                <li><a href="/supervisor/data-user.html">Data User</a></li>
-                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
-            </ul>
+          <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/supervisor/kasir.html">Kasir</a></li>
+            <li>
+              <a href="/supervisor/data-penjualan.html">Data Penjualan</a>
+            </li>
+            <li><a href="/supervisor/data-user.html">Data User</a></li>
+            <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+          </ul>
         </div>
-    </div>
+      </div>
 
-    <div class="konten">
+      <div class="konten">
         <div class="isi-konten">
-            <div class="con-button">
-                <button class="btn tambah" onclick="window.location.href='/supervisor/tambah-user.html'"> + Tambah</button>
-                <input type="text" id="search" placeholder="Cari berdasarkan username atau role atau nama lengkap ..." onkeyup="loadDataUser()">
-            </div>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>ID User</th>
-                        <th>Username</th>
-                        <th>Password</th>
-                        <th>Role</th>
-                        <th>Nama Lengkap</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="data_user">
-                    
-                </tbody>
-            </table>
-            
-            <div id="pagination" class="pagination">
+          <div class="con-button">
+            <button
+              class="btn tambah"
+              onclick="window.location.href='/supervisor/tambah-user.html'"
+            >
+              + Tambah
+            </button>
+            <input
+              type="text"
+              id="search"
+              placeholder="Cari berdasarkan username atau role atau nama lengkap ..."
+              onkeyup="loadDataUser()"
+            />
+          </div>
+          <table border="1">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>ID User</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Role</th>
+                <th>Nama Lengkap</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="data_user"></tbody>
+          </table>
+
+          <div id="pagination" class="pagination">
             <!-- Pagination controls akan dirender oleh JavaScript -->
+          </div>
+          <!-- Modal Konfirmasi Hapus -->
+          <div class="modal-content" id="deleteModal">
+            <p id="confirmMessage">
+              Apakah Anda yakin ingin menghapus User ini?
+            </p>
+            <div class="modal-actions">
+              <button id="confirmYes" class="btn delete">Ya</button>
+              <button id="confirmNo" class="btn cancel">Batal</button>
             </div>
-            <!-- Modal Konfirmasi Hapus -->
-<div class="modal-content" id="deleteModal">
-    <p id="confirmMessage">Apakah Anda yakin ingin menghapus User ini?</p>
-    <div class="modal-actions">
-      <button id="confirmYes" class="btn delete">Ya</button>
-      <button id="confirmNo" class="btn cancel">Batal</button>
-    </div>
-  </div>
-  
-  <!-- Modal Konfirmasi Logout -->
-  <div class="modal-content" id="logoutModal">
-    <p>Apakah Anda yakin ingin logout?</p>
-    <div class="modal-actions">
-      <button id="logoutYes" class="btn delete">Ya</button>
-      <button id="logoutNo" class="btn cancel">Batal</button>
-    </div>
-  </div>
-  
-  <!-- Toastify -->
-  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+          </div>
 
+          <!-- Modal Konfirmasi Logout -->
+          <div class="modal-content" id="logoutModal">
+            <p>Apakah Anda yakin ingin logout?</p>
+            <div class="modal-actions">
+              <button id="logoutYes" class="btn delete">Ya</button>
+              <button id="logoutNo" class="btn cancel">Batal</button>
+            </div>
+          </div>
+
+          <!-- Toastify -->
+          <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
         </div>
+      </div>
     </div>
-</div>
-<script>
-function showToast(message, type = "success") {
-    Toastify({
-        text: message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
-        close: true,
-    }).showToast();
-}
+    <script>
+      function showToast(message, type = "success") {
+        Toastify({
+          text: message,
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+          close: true,
+        }).showToast();
+      }
 
-let currentPage = 0;
-let totalPages = 0;
+      let currentPage = 0;
+      let totalPages = 0;
 
-const loadDataUser = async (page = 0) => {
-    try {
-        const searchValue = document.getElementById('search').value; // Ambil nilai input search
-        const response = await fetch(`/api/user?page=${page}&limit=9&accessRole=supervisor&search=${encodeURIComponent(searchValue)}`);
-        
-        if (!response.ok) {
-            throw new Error('Gagal mengambil data user');
-        }
-        
-        const data = await response.json();
+      const loadDataUser = async (page = 0) => {
+        try {
+          const searchValue = document.getElementById("search").value; // Ambil nilai input search
+          const response = await fetch(
+            `/api/user?page=${page}&limit=9&accessRole=supervisor&search=${encodeURIComponent(
+              searchValue
+            )}`
+          );
 
-        totalPages = data.totalPages;
-        currentPage = data.page;
+          if (!response.ok) {
+            throw new Error("Gagal mengambil data user");
+          }
 
-        const tableBody = document.getElementById('data_user');
-        tableBody.innerHTML = ''; // Clear existing data
+          const data = await response.json();
 
-        if (data.result.length === 0) {
+          totalPages = data.totalPages;
+          currentPage = data.page;
+
+          const tableBody = document.getElementById("data_user");
+          tableBody.innerHTML = ""; // Clear existing data
+
+          if (data.result.length === 0) {
             // Tampilkan pesan jika tidak ada data yang ditemukan
-            const emptyRow = document.createElement('tr');
+            const emptyRow = document.createElement("tr");
             emptyRow.innerHTML = `<td colspan="7" style="text-align: center; font-style: italic;">Tidak ada user yang ditemukan</td>`;
             tableBody.appendChild(emptyRow);
-        } else {
+          } else {
             data.result.forEach((user, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${(currentPage * 9) + index + 1}</td>
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${currentPage * 9 + index + 1}</td>
                 <td class="tengah">${user.id_user}</td>
                 <td>${user.username}</td>
-                <td>${user.password.length > 6 ? user.password.slice(0, Math.ceil(user.password.length / 2)) + '...' : user.password}</td>
+                <td>${
+                  user.password.length > 6
+                    ? user.password.slice(
+                        0,
+                        Math.ceil(user.password.length / 2)
+                      ) + "..."
+                    : user.password
+                }</td>
                 <td>${user.role}</td>
                 <td class="tengah">${user.nama_lengkap}</td>
                 <td>
-                    <button class="btn edit" onclick="editUser(${user.id_user})">Edit</button>
-                    <button class="btn delete" onclick="deleteUser(${user.id_user})">Hapus</button>
+                    <button class="btn edit" onclick="editUser(${
+                      user.id_user
+                    })">Edit</button>
+                    <button class="btn delete" onclick="deleteUser(${
+                      user.id_user
+                    })">Hapus</button>
                 </td>
             `;
-            tableBody.appendChild(row);
-        });
+              tableBody.appendChild(row);
+            });
+          }
+
+          updatePagination();
+        } catch (error) {
+          console.error("Error:", error);
         }
+      };
 
-        updatePagination();
-    } catch (error) {
-        console.error('Error:', error);
-    }
-};
+      const updatePagination = () => {
+        const paginationElement = document.getElementById("pagination");
 
-const updatePagination = () => {
-    const paginationElement = document.getElementById('pagination');
-
-    let paginationHTML = `
-        <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
+        let paginationHTML = `
+        <button onclick="changePage(${currentPage - 1})" ${
+          currentPage === 0 ? "disabled" : ""
+        }>Previous</button>
         <span>Page ${currentPage + 1} of ${totalPages}</span>
-        <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
+        <button onclick="changePage(${currentPage + 1})" ${
+          currentPage >= totalPages - 1 ? "disabled" : ""
+        }>Next</button>
     `;
 
-    paginationElement.innerHTML = paginationHTML;
-};
+        paginationElement.innerHTML = paginationHTML;
+      };
 
-const changePage = (page) => {
-    if (page < 0 || page >= totalPages) return;
-    loadDataUser(page);
-};
+      const changePage = (page) => {
+        if (page < 0 || page >= totalPages) return;
+        loadDataUser(page);
+      };
 
+      // Function to handle delete
+      let deleteId = null;
 
-// Function to handle delete
-let deleteId = null;
+      const deleteUser = (id) => {
+        deleteId = id;
+        document.getElementById("deleteModal").classList.add("active");
+      };
 
-const deleteUser = (id) => {
-    deleteId = id;
-    document.getElementById('deleteModal').classList.add('active');
-};
-
-document.getElementById("confirmYes").addEventListener("click", async () => {
-    if (!deleteId) return;
-    try {
-        const response = await fetch(`/api/user/${deleteId}`, { method: 'DELETE' });
-        if (response.ok) {
-            showToast("User berhasil dihapus");
-            loadDataUser();
-        } else {
-            const err = await response.json();
-            showToast(err.msg || "Gagal menghapus user", "error");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        showToast("Terjadi kesalahan saat menghapus user", "error");
-    }
-    document.getElementById('deleteModal').classList.remove('active');
-    deleteId = null;
-});
-
-document.getElementById("confirmNo").addEventListener("click", () => {
-    document.getElementById('deleteModal').classList.remove('active');
-    deleteId = null;
-});
-
-
-
-const editUser = (id) => {
-    window.location.href = `/supervisor/edit-data-user.html?id=${id}`;
-};
-
-
-document.querySelector('.btn.tambah').addEventListener('click', () => {
-    window.location.href = '/supervisor/tambah-data-user.html';
-});
-
-document.addEventListener('DOMContentLoaded', loadDataUser);
-function handleLogout(event) {
-    event.preventDefault();
-    document.getElementById('logoutModal').classList.add('active');
-}
-
-document.getElementById("logoutYes").addEventListener("click", async () => {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'GET',
-            credentials: 'include'
+      document
+        .getElementById("confirmYes")
+        .addEventListener("click", async () => {
+          if (!deleteId) return;
+          try {
+            const response = await fetch(`/api/user/${deleteId}`, {
+              method: "DELETE",
+            });
+            if (response.ok) {
+              showToast("User berhasil dihapus");
+              loadDataUser();
+            } else {
+              const err = await response.json();
+              showToast(err.msg || "Gagal menghapus user", "error");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            showToast("Terjadi kesalahan saat menghapus user", "error");
+          }
+          document.getElementById("deleteModal").classList.remove("active");
+          deleteId = null;
         });
-        if (response.ok) {
-            showToast("Logout berhasil", "success");
-            setTimeout(() => {
-                window.location.href = '/login';
-            }, 1000);
-        } else {
-            showToast("Gagal logout. Silakan coba lagi.", "error");
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        showToast("Terjadi kesalahan saat logout", "error");
-    }
-    document.getElementById('logoutModal').classList.remove('active');
-});
 
-document.getElementById("logoutNo").addEventListener("click", () => {
-    document.getElementById('logoutModal').classList.remove('active');
-});
+      document.getElementById("confirmNo").addEventListener("click", () => {
+        document.getElementById("deleteModal").classList.remove("active");
+        deleteId = null;
+      });
 
-</script>
+      const editUser = (id) => {
+        window.location.href = `/supervisor/edit-data-user.html?id=${id}`;
+      };
 
-</body>
+      document.querySelector(".btn.tambah").addEventListener("click", () => {
+        window.location.href = "/supervisor/tambah-data-user.html";
+      });
+
+      document.addEventListener("DOMContentLoaded", loadDataUser);
+      function handleLogout(event) {
+        event.preventDefault();
+        document.getElementById("logoutModal").classList.add("active");
+      }
+
+      document
+        .getElementById("logoutYes")
+        .addEventListener("click", async () => {
+          try {
+            const response = await fetch("/api/logout", {
+              method: "GET",
+              credentials: "include",
+            });
+            if (response.ok) {
+              showToast("Logout berhasil", "success");
+              setTimeout(() => {
+                window.location.href = "/login";
+              }, 1000);
+            } else {
+              showToast("Gagal logout. Silakan coba lagi.", "error");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            showToast("Terjadi kesalahan saat logout", "error");
+          }
+          document.getElementById("logoutModal").classList.remove("active");
+        });
+
+      document.getElementById("logoutNo").addEventListener("click", () => {
+        document.getElementById("logoutModal").classList.remove("active");
+      });
+    </script>
+  </body>
 </html>
