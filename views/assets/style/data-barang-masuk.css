@@ -133,7 +133,7 @@ td:first-child {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    color: rgb(0, 0, 0);
+    color: white;
     margin: 0 5px;
 }
 
@@ -151,6 +151,7 @@ td:first-child {
 .edit {
     background-color: #00BFFF;
     width: 60px;
+    color: white;
 }
 
 .delete {
@@ -175,9 +176,13 @@ td:first-child {
     opacity: 0.8;
 }
 
-/* .tengah {
+.tengah {
     text-align: center;
-} */
+}
+
+.kiri {
+    text-align: left;
+}
 
 .gambar-barang {
     border-radius: 0;
@@ -285,5 +290,19 @@ label {
 
 .print {
     background-color: #00BFFF;
+    margin-bottom: 15px;
+}
+
+.delete {
+    width: 60px;
+    color: white;
+}
+
+.cancel {
+    width: 60px;
+    background-color: #808080;
+}
+
+#confirmMessage {
     margin-bottom: 15px;
 }

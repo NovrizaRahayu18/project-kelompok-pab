@@ -52,9 +52,9 @@
                         <th>No</th>
                         <th>ID Barang Masuk</th>
                         <th>ID Barang</th>
-                        <th>Tanggal Masuk</th>
-                        <th>Stok</th>
-                        <th>Keterangan</th>
+                        <th class="tengah">Tanggal Masuk</th>
+                        <th class="tengah">Stok</th>
+                        <th class="tengah">Keterangan</th>
                         <!-- <th>Aksi</th> -->
                     </tr>
                 </thead>
@@ -139,11 +139,11 @@ const loadDataBarangMasuk = async (page = 0) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${(currentPage * 9) + index + 1}</td>
-                    <td class="tengah">${item.id_barang_masuk}</td>
+                    <td>${item.id_barang_masuk}</td>
                     <td>${item.id_barang} - ${item.barang.nama_barang}</td>
                     <td class="tengah">${formatDate(item.tanggal_masuk)}</td>
                     <td class="tengah">${item.jumlah}</td>
-                    <td>${item.keterangan || '-'}</td>
+                    <td class="kiri">${item.keterangan || '-'}</td>
                     <!--
                     <td>
                         <button class="btn edit" onclick="editBarangMasuk(${item.id_barang_masuk})">Edit</button>

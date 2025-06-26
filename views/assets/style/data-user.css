@@ -170,7 +170,7 @@ td:first-child {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    color: rgb(0, 0, 0);
+    color: white;
     margin: 0 5px;
 }
 
@@ -273,4 +273,8 @@ td:first-child {
 #search::placeholder {
     color: #aaa;
     font-style: italic;
+}
+
+.tengah {
+    text-align: center;
 }
