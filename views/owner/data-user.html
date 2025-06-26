@@ -236,7 +236,7 @@ document.getElementById("logoutYes").addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            showToast("Logout berhasil", "success");
+            // showToast("Logout berhasil", "success");
             setTimeout(() => {
                 window.location.href = '/login';
             }, 1000);
