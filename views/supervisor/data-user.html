@@ -59,11 +59,41 @@
             <div id="pagination" class="pagination">
             <!-- Pagination controls akan dirender oleh JavaScript -->
             </div>
-            
+            <!-- Modal Konfirmasi Hapus -->
+<div class="modal-content" id="deleteModal">
+    <p id="confirmMessage">Apakah Anda yakin ingin menghapus User ini?</p>
+    <div class="modal-actions">
+      <button id="confirmYes" class="btn delete">Ya</button>
+      <button id="confirmNo" class="btn cancel">Batal</button>
+    </div>
+  </div>
+  
+  <!-- Modal Konfirmasi Logout -->
+  <div class="modal-content" id="logoutModal">
+    <p>Apakah Anda yakin ingin logout?</p>
+    <div class="modal-actions">
+      <button id="logoutYes" class="btn delete">Ya</button>
+      <button id="logoutNo" class="btn cancel">Batal</button>
+    </div>
+  </div>
+  
+  <!-- Toastify -->
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
         </div>
     </div>
 </div>
 <script>
+function showToast(message, type = "success") {
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+        close: true,
+    }).showToast();
+}
 
 let currentPage = 0;
 let totalPages = 0;
@@ -134,25 +164,37 @@ const changePage = (page) => {
 
 
 // Function to handle delete
-const deleteUser = async (id) => {
-    if (confirm('Apakah Anda yakin ingin menghapus User ini?')) {
-        try {
-            const response = await fetch(`/api/user/${id}`, {
-                method: 'DELETE'
-            });
-            
-            if (response.ok) {
-                alert('User berhasil dihapus');
-                loadDataUser(); // Reload the table
-            } else {
-                alert('Gagal menghapus User');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus User');
-        }
-    }
+let deleteId = null;
+
+const deleteUser = (id) => {
+    deleteId = id;
+    document.getElementById('deleteModal').classList.add('active');
 };
+
+document.getElementById("confirmYes").addEventListener("click", async () => {
+    if (!deleteId) return;
+    try {
+        const response = await fetch(`/api/user/${deleteId}`, { method: 'DELETE' });
+        if (response.ok) {
+            showToast("User berhasil dihapus");
+            loadDataUser();
+        } else {
+            const err = await response.json();
+            showToast(err.msg || "Gagal menghapus user", "error");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        showToast("Terjadi kesalahan saat menghapus user", "error");
+    }
+    document.getElementById('deleteModal').classList.remove('active');
+    deleteId = null;
+});
+
+document.getElementById("confirmNo").addEventListener("click", () => {
+    document.getElementById('deleteModal').classList.remove('active');
+    deleteId = null;
+});
+
 
 
 const editUser = (id) => {
@@ -165,28 +207,36 @@ document.querySelector('.btn.tambah').addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', loadDataUser);
-
-async function handleLogout(event) {
+function handleLogout(event) {
     event.preventDefault();
-    
-    if (confirm("Apakah Anda yakin ingin logout?")) {
-        try {
-            const response = await fetch('/api/logout', {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                window.location.href = '/login';
-            } else {
-                alert('Gagal logout. Silakan coba lagi.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat logout');
-        }
-    }
+    document.getElementById('logoutModal').classList.add('active');
 }
+
+document.getElementById("logoutYes").addEventListener("click", async () => {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        if (response.ok) {
+            showToast("Logout berhasil", "success");
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1000);
+        } else {
+            showToast("Gagal logout. Silakan coba lagi.", "error");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        showToast("Terjadi kesalahan saat logout", "error");
+    }
+    document.getElementById('logoutModal').classList.remove('active');
+});
+
+document.getElementById("logoutNo").addEventListener("click", () => {
+    document.getElementById('logoutModal').classList.remove('active');
+});
+
 </script>
 
 </body>
