@@ -1,193 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentro Store - Dashboard</title>
-    <link rel="stylesheet" href="/assets/style/index.css">
-    <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
-    <style>
-        
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zentro Store - Dashboard</title>
+  <link rel="stylesheet" href="/assets/style/index.css">
+  <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
+  <!-- Toastify CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
-    
+
 <div class="container">
-
-    <div class="navigasi">
-        <div class="judul">
-            <div class="gambar">
-                <img src="/assets/images/logo.jpg" alt="">
-            </div>
-            <h2>Zentro Store</h2>
-        </div>
-        
-        <div class="list">
-            <ul>
-                <li><a href="/">Dashboard</a></li>
-                <li><a href="/admin-persediaan/data-barang.html">Data Barang</a></li>
-                <li><a href="/admin-persediaan/data-barang-masuk.html">Data Barang Masuk</a></li>
-                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
-            </ul>
-        </div>
+  <div class="navigasi">
+    <div class="judul">
+      <div class="gambar">
+        <img src="/assets/images/logo.jpg" alt="">
+      </div>
+      <h2>Zentro Store</h2>
     </div>
-
-    <div class="konten">
-        <div class="isi-konten">
-            <p class="welcome" id="nama_lengkap"></p>
-            <p class="isi-welcome" id="role">Saat ini anda login dengan role </p>
-        </div>
-
-        <div class="judul-konten">
-            <div class="brg">
-                <p class="judul-brg">Total Barang</p>
-                <div class="con-card barang">
-                <div class="card-dash">
-                    <div class="card-title">
-                    <h3>Jumlah Barang</h3>
-                    <h3 id="jmlh-brg">0</h3>
-                    </div>
-                </div>
-
-                <div class="card-dash">
-                    <div class="card-title">
-                    <h3>Total Stok</h3>
-                    <h3 id="total-stok">0</h3>
-                    </div>
-                </div>
-                </div>
-            </div>
-
-            <div class="brg-masuk">
-                <p class="judul-brg-masuk">Total Barang Masuk</p>
-                <div class="con-card barang">
-                <div class="card-dash">
-                    <div class="card-title">
-                    <h3>Transaksi Brg Masuk</h3>
-                    <h3 id="transaksi-brg-masuk">0</h3>
-                    </div>
-                </div>
-
-                <div class="card-dash">
-                    <div class="card-title">
-                    <h3>Total Barang Masuk</h3>
-                    <h3 id="total-brg-masuk">0</h3>
-                    </div>
-                </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="list">
+      <ul>
+        <li><a href="/">Dashboard</a></li>
+        <li><a href="/admin-persediaan/data-barang.html">Data Barang</a></li>
+        <li><a href="/admin-persediaan/data-barang-masuk.html">Data Barang Masuk</a></li>
+        <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+      </ul>
     </div>
-</div>
-<!-- <div id="logoutModal" style="display: none; position: fixed; top: 0; left: 0; 
-  width: 100%; height: 100%; background: rgba(0,0,0,0.4); 
-  display: flex; justify-content: center; align-items: center; z-index: 9999;">
-  <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
-    <p>Apakah Anda yakin ingin logout?</p>
-    <button id="confirmLogout" class="btn">Ya</button>
-    <button id="cancelLogout" class="btn">Batal</button>
   </div>
-</div> -->
+
+  <div class="konten">
+    <div class="isi-konten">
+      <p class="welcome" id="nama_lengkap"></p>
+      <p class="isi-welcome" id="role">Saat ini anda login dengan role </p>
+    </div>
+
+    <div class="judul-konten">
+      <div class="brg">
+        <p class="judul-brg">Total Barang</p>
+        <div class="con-card barang">
+          <div class="card-dash">
+            <div class="card-title">
+              <h3>Jumlah Barang</h3>
+              <h3 id="jmlh-brg">0</h3>
+            </div>
+          </div>
+          <div class="card-dash">
+            <div class="card-title">
+              <h3>Total Stok</h3>
+              <h3 id="total-stok">0</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="brg-masuk">
+        <p class="judul-brg-masuk">Total Barang Masuk</p>
+        <div class="con-card barang">
+          <div class="card-dash">
+            <div class="card-title">
+              <h3>Transaksi Brg Masuk</h3>
+              <h3 id="transaksi-brg-masuk">0</h3>
+            </div>
+          </div>
+          <div class="card-dash">
+            <div class="card-title">
+              <h3>Total Barang Masuk</h3>
+              <h3 id="total-brg-masuk">0</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Logout -->
+  <div class="modal-content" id="logoutModal">
+    <p>Apakah Anda yakin ingin logout?</p>
+    <div class="modal-actions">
+      <button id="logoutYes" class="btn delete">Ya</button>
+      <button id="logoutNo" class="btn cancel">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toastify JS -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <script>
-
-function getCookieValue(cookieName) {
-    const cookies = document.cookie.split('; ');
-    
-    for (let i = 0; i < cookies.length; i++) {
-        const [key, value] = cookies[i].split('=');
-        if (key === cookieName) {
-            return decodeURIComponent(value); 
-        }
-    }
-    return null;
+function getCookieValue(name) {
+  const cookies = document.cookie.split('; ');
+  for (let i = 0; i < cookies.length; i++) {
+    const [key, value] = cookies[i].split('=');
+    if (key === name) return decodeURIComponent(value);
+  }
+  return null;
 }
 
 async function updateDashboard() {
-    try {
-        // Fetch all barang data to count total items and sum stock
-        const barangResponse = await fetch('/api/barang?all=true');
-        const barangData = await barangResponse.json();
-        
-        // Count total items
-        const totalBarang = barangData.result.length;
-        
-        // Sum all stock
-        const totalStok = barangData.result.reduce((sum, item) => sum + parseInt(item.stok || 0), 0);
-        
-        // Update the DOM elements for barang
-        document.getElementById('jmlh-brg').textContent = `${totalBarang}`;
-        document.getElementById('total-stok').textContent = `${totalStok}`;
-        
-        // Fetch all barang masuk data to count transactions and sum total incoming items
-        const barangMasukResponse = await fetch('/api/barang-masuk?limit=9999');
-        const barangMasukData = await barangMasukResponse.json();
-        
-        // Count total transactions
-        const totalTransaksi = barangMasukData.result.length;
-        
-        // Sum all incoming items (assuming there's a 'jumlah' field in each transaction)
-        const totalBarangMasuk = barangMasukData.result.reduce((sum, transaction) => sum + parseInt(transaction.jumlah || 0), 0);
-        
-        // Update the DOM elements for barang masuk
-        document.getElementById('transaksi-brg-masuk').textContent = `${totalTransaksi}`;
-        document.getElementById('total-brg-masuk').textContent = `${totalBarangMasuk}`;
-        
-        console.log('Dashboard updated successfully');
-    } catch (error) {
-        console.error('Error updating dashboard:', error);
-    }
+  try {
+    const barangResponse = await fetch('/api/barang?all=true');
+    const barangData = await barangResponse.json();
+    const totalBarang = barangData.result.length;
+    const totalStok = barangData.result.reduce((sum, item) => sum + parseInt(item.stok || 0), 0);
+    document.getElementById('jmlh-brg').textContent = totalBarang;
+    document.getElementById('total-stok').textContent = totalStok;
+
+    const barangMasukResponse = await fetch('/api/barang-masuk?limit=9999');
+    const barangMasukData = await barangMasukResponse.json();
+    const totalTransaksi = barangMasukData.result.length;
+    const totalBarangMasuk = barangMasukData.result.reduce((sum, item) => sum + parseInt(item.jumlah || 0), 0);
+    document.getElementById('transaksi-brg-masuk').textContent = totalTransaksi;
+    document.getElementById('total-brg-masuk').textContent = totalBarangMasuk;
+  } catch (error) {
+    showToast('Gagal mengambil data dashboard', 'error');
+    console.error(error);
+  }
 }
 
-async function handleLogout(event) {
-    event.preventDefault();
-    
-    if (confirm("Apakah Anda yakin ingin logout?")) {
-        try {
-            const response = await fetch('/api/logout', {
-                method: 'GET',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                window.location.href = '/login';
-            } else {
-                alert('Gagal logout. Silakan coba lagi.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat logout');
-        }
-    }
+function showToast(message, type = "success") {
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+    close: true,
+  }).showToast();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Halaman telah dimuat sepenuhnya.');
-    
-    // Set user information from cookies
-    const username = getCookieValue('nama_lengkap');
-    console.log(username);
-    
-    if (username) {
-        document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${username}`;
-    } else {
-        document.getElementById('nama_lengkap').textContent = 'Anonymous';
-    }
+function handleLogout(event) {
+  event.preventDefault();
+  document.getElementById('logoutModal').classList.add('active');
+}
 
-    const role = getCookieValue('role');
-    console.log(role);
+document.getElementById("logoutYes").addEventListener("click", async () => {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-    if (role) {
-        document.getElementById('role').textContent = ` Saat ini anda login dengan role ${role}`;
+    if (response.ok) {
+      // showToast("Logout berhasil", "success");
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1000);
     } else {
-        document.getElementById('role').textContent = 'Anonymous';
+      showToast("Gagal logout. Silakan coba lagi.", "error");
     }
-    
-    // Update dashboard data
-    updateDashboard();
+  } catch (error) {
+    console.error("Error:", error);
+    showToast("Terjadi kesalahan saat logout", "error");
+  }
+  document.getElementById('logoutModal').classList.remove('active');
 });
 
+document.getElementById("logoutNo").addEventListener("click", () => {
+  document.getElementById('logoutModal').classList.remove('active');
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const nama = getCookieValue('nama_lengkap') || 'Anonymous';
+  const role = getCookieValue('role') || 'Anonymous';
+  document.getElementById('nama_lengkap').textContent = ` Selamat datang, ${nama}`;
+  document.getElementById('role').textContent = ` Saat ini anda login dengan role ${role}`;
+  updateDashboard();
+});
 </script>
 
 </body>

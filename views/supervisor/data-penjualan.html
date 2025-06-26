@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zentro Store - Data Penjualan</title>
     <link rel="stylesheet" href="/assets/style/data-penjualan.css">
-    <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
+    <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">z
 </head>
 <body>
     
@@ -68,6 +68,15 @@
             </div>
         </div>
     </div>
+    <div id="deleteModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <p>Apakah Anda yakin ingin menghapus data penjualan ini?</p>
+          <div class="modal-actions">
+            <button class="btn cancel" onclick="closeModal()">Batal</button>
+            <button class="btn confirm" onclick="confirmDelete()">Hapus</button>
+          </div>
+        </div>
+      </div>
 </div>
 <script>
 document.getElementById('printButton').addEventListener('click', () => {
@@ -192,27 +201,38 @@ document.addEventListener('DOMContentLoaded', () => {
 const showDetail = (id) => {
     window.location.href = `/supervisor/data-detail-penjualan.html?id=${id}`;
 };
+let penjualanIdToDelete = null;
 
-    const deletePenjualan = async (id) => {
-    if (confirm('Apakah Anda yakin ingin menghapus Data Penjualan ini?')) {
-        try {
-            const response = await fetch(`/api/penjualan/${id}`, {
-                method: 'DELETE'
-            });
-            
-            if (response.ok) {
-                alert('Penjualan berhasil dihapus');
-                loadDataPenjualan(); 
-            } else {
-                alert('Gagal menghapus penjualan');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus penjualan');
-        }
+  function deletePenjualan(id) {
+    penjualanIdToDelete = id;
+    document.getElementById("deleteModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    penjualanIdToDelete = null;
+    document.getElementById("deleteModal").style.display = "none";
+  }
+
+  async function confirmDelete() {
+    if (!penjualanIdToDelete) return;
+    
+    try {
+      const response = await fetch(`/api/penjualan/${penjualanIdToDelete}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        alert('Penjualan berhasil dihapus');
+        closeModal();
+        loadDataPenjualan(); 
+      } else {
+        alert('Gagal menghapus penjualan');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Terjadi kesalahan saat menghapus penjualan');
     }
-};
-
+  }
     // document.addEventListener('DOMContentLoaded', loadDataPenjualan);
 
 async function handleLogout(event) {
