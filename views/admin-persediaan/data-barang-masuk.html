@@ -6,6 +6,32 @@
     <title>Zentro Store - Data Barang Masuk</title>
     <link rel="stylesheet" href="/assets/style/data-barang-masuk.css">
     <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <style>
+        #confirmModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #confirmModal .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 300px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.25);
+        }
+
+        #confirmModal button {
+            margin: 10px 5px 0;
+        }
+    </style>
 </head>
 <body>
     
@@ -32,7 +58,7 @@
     <div class="konten">
         <div class="isi-konten">
             <div class="con-button">
-                <button class="btn tambah" onclick="window.location.href='/admin-persediaan-persediaan/tambah-data-barang-masuk.html'"> + Tambah</button>
+                <button class="btn tambah"> + Tambah</button>
                 <div class="filter-container">
                     <div class="date-filter">
                         <label for="startDate">Dari Tanggal:</label>
@@ -55,41 +81,80 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="data_barang_masuk">
-                    
-                </tbody>
+                <tbody id="data_barang_masuk"></tbody>
             </table>
 
-            <div id="pagination" class="pagination">
-            <!-- Pagination controls akan dirender oleh JavaScript -->
-            </div>
+            <div id="pagination" class="pagination"></div>
         </div>
     </div>
 </div>
 
+<div id="confirmModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <p id="confirmMessage">Apakah Anda yakin ingin menghapus barang ini?</p>
+    <div class="modal-actions">
+      <button id="confirmYes" class="btn delete">Ya</button>
+      <button id="confirmNo" class="btn cancel">Batal</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
+function showToast(message, type = "success") {
+    Toastify({
+        text: message,
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+    }).showToast();
+}
+
+document.getElementById('confirmNo').addEventListener('click', () => {
+    document.getElementById('confirmModal').style.display = 'none';
+});
+function showConfirm(message, callback) {
+    const modal = document.getElementById('confirmModal');
+    const messageEl = document.getElementById('confirmMessage');
+    const yesBtn = document.getElementById('confirmYes');
+    const noBtn = document.getElementById('confirmNo');
+
+    messageEl.innerText = message;
+    modal.style.display = 'flex';
+
+    yesBtn.onclick = () => {
+        modal.style.display = 'none';
+        callback(true);
+    };
+
+    noBtn.onclick = () => {
+        modal.style.display = 'none';
+        callback(false);
+    };
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').style.display = 'none';
+}
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
-
     const day = String(date.getDate()).padStart(2, '0'); 
     const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const year = date.getFullYear();
-
     return `${month}-${day}-${year}`;
 };
 
 document.getElementById('startDate').addEventListener('change', applyDateFilter);
 document.getElementById('endDate').addEventListener('change', applyDateFilter);
 
-// Fungsi untuk menerapkan filter tanggal
 function applyDateFilter() {
-    // Reset ke halaman pertama saat menerapkan filter
     currentPage = 0;
     loadDataBarangMasuk();
 }
 
-// Fungsi reset filter
 function resetFilter() {
     document.getElementById('startDate').value = '';
     document.getElementById('endDate').value = '';
@@ -97,32 +162,27 @@ function resetFilter() {
     loadDataBarangMasuk();
 }
 
-// Update fungsi loadDataBarangMasuk untuk menyertakan parameter filter tanggal
+let currentPage = 0;
+let totalPages = 1;
+
 const loadDataBarangMasuk = async (page = 0) => {
     try {
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
-        
+
         let url = `/api/barang-masuk?page=${page}&limit=9`;
-        
-        // Tambahkan parameter tanggal jika ada
-        if (startDate) {
-            url += `&startDate=${startDate}`;
-        }
-        if (endDate) {
-            url += `&endDate=${endDate}`;
-        }
-        
+        if (startDate) url += `&startDate=${startDate}`;
+        if (endDate) url += `&endDate=${endDate}`;
+
         const response = await fetch(url);
         const data = await response.json();
         totalPages = data.totalPages;
         currentPage = data.page;
-        
+
         const tableBody = document.getElementById('data_barang_masuk');
         tableBody.innerHTML = '';
-        
+
         if (data.result.length === 0) {
-            // Tampilkan pesan jika tidak ada data yang ditemukan
             const emptyRow = document.createElement('tr');
             emptyRow.innerHTML = `<td colspan="7" style="text-align: center; font-style: italic;">Tidak ada data dalam rentang tanggal yang dipilih</td>`;
             tableBody.appendChild(emptyRow);
@@ -144,26 +204,23 @@ const loadDataBarangMasuk = async (page = 0) => {
                 tableBody.appendChild(row);
             });
         }
-        
+
         updatePagination();
     } catch (error) {
         console.error('Error:', error);
+        showToast('Gagal memuat data', 'error');
     }
 };
 
 const updatePagination = () => {
     const paginationElement = document.getElementById('pagination');
-    
-    let paginationHTML = `
+    paginationElement.innerHTML = `
         <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
         <span>Page ${currentPage + 1} of ${totalPages}</span>
         <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
     `;
-    
-    paginationElement.innerHTML = paginationHTML;
 };
 
-// Fungsi untuk ganti halaman
 const changePage = (page) => {
     if (page < 0 || page >= totalPages) return;
     currentPage = page;
@@ -171,24 +228,25 @@ const changePage = (page) => {
 };
 
 const deleteBarangMasuk = async (id) => {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini? Stok barang akan berkurang sesuai jumlah barang masuk.')) {
+    showConfirm('Apakah Anda yakin ingin menghapus data ini? Stok barang akan berkurang sesuai jumlah barang masuk.', async (confirmed) => {
+        if (!confirmed) return;
         try {
             const response = await fetch(`/api/barang-masuk/${id}`, {
                 method: 'DELETE'
             });
-            
+
             if (response.ok) {
-                alert('Data barang masuk berhasil dihapus');
+                showToast('Data barang masuk berhasil dihapus', 'success');
                 loadDataBarangMasuk(); 
             } else {
                 const error = await response.json();
-                alert(error.msg || 'Gagal menghapus data');
+                showToast(error.msg || 'Gagal menghapus data', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus data');
+            showToast('Terjadi kesalahan saat menghapus data', 'error');
         }
-    }
+    });
 };
 
 const editBarangMasuk = (id) => {
@@ -203,8 +261,10 @@ document.addEventListener('DOMContentLoaded', loadDataBarangMasuk);
 
 async function handleLogout(event) {
     event.preventDefault();
-    
-    if (confirm("Apakah Anda yakin ingin logout?")) {
+
+    showConfirm("Apakah Anda yakin ingin logout?", async (confirmed) => {
+        if (!confirmed) return;
+
         try {
             const response = await fetch('/api/logout', {
                 method: 'GET',
@@ -214,15 +274,14 @@ async function handleLogout(event) {
             if (response.ok) {
                 window.location.href = '/login';
             } else {
-                alert('Gagal logout. Silakan coba lagi.');
+                showToast('Gagal logout. Silakan coba lagi.', 'error');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat logout');
+            showToast('Terjadi kesalahan saat logout', 'error');
         }
-    }
+    });
 }
-
 </script>
 
 </body>

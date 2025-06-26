@@ -12,6 +12,84 @@ body {
 .container {
     display: flex;
 }
+/* Modal background */
+#customConfirm {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Modal box */
+#customConfirm .modal-box {
+    background: #fff;
+    padding: 24px 32px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 360px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal message text */
+#customConfirm p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Modal buttons */
+#customConfirm button {
+    padding: 8px 18px;
+    margin: 0 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+/* Confirm button */
+#confirmYes {
+    background-color: #e53935;
+    color: white;
+}
+
+#confirmYes:hover {
+    background-color: #c62828;
+}
+
+/* Cancel button */
+#confirmNo {
+    background-color: #eeeeee;
+    color: #333;
+}
+
+#confirmNo:hover {
+    background-color: #cccccc;
+}
+
+#logoutModal .btn {
+    margin: 10px 5px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#logoutModal .btn:first-child {
+    background-color: #f44336;
+    color: white;
+}
+
+#logoutModal .btn:last-child {
+    background-color: #ccc;
+}
 
 .navigasi {
     width: 250px;

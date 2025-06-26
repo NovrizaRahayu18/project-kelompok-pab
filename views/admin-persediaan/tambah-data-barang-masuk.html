@@ -1,168 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zentro Store - Tambah Barang Masuk</title>
-    <link
-      rel="stylesheet"
-      href="/assets/style/tambah-data-barang-masuk.css"
-    />
-    <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="navigasi">
-        <div class="judul">
-          <div class="gambar">
-            <img class="lingkaran" src="/assets/images/logo.jpg" alt="" />
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Zentro Store - Tambah Barang Masuk</title>
+      <link
+        rel="stylesheet"
+        href="/assets/style/tambah-data-barang-masuk.css"
+      />
+      <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg" />
+      <!-- Toastify CSS -->
+      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    </head>
+    <body>
+      <div class="container">
+        <div class="navigasi">
+          <div class="judul">
+            <div class="gambar">
+              <img class="lingkaran" src="/assets/images/logo.jpg" alt="" />
+            </div>
+            <h2>Zentro Store</h2>
           </div>
-          <h2>Zentro Store</h2>
-        </div>
 
-        <div class="list">
-          <ul>
-            <li><a href="/">Dashboard</a></li>
-            <li>
-              <a href="/admin-persediaan/data-barang.html">Data Barang</a>
-            </li>
-            <li>
-              <a href="/admin-persediaan/data-barang-masuk.html"
-                >Data Barang Masuk</a
-              >
-            </li>
-            <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="konten">
-        <div class="isi-konten">
-          <div class="form-container">
-            <h2 class="tambah-title">Tambah Barang Masuk</h2>
-            <form id="tambahForm">
-              <div class="form-group">
-                <label for="id_barang">Nama Barang</label>
-                <select name="id_barang" id="id_barang"></select>
-              </div>
-
-              <div class="form-group">
-                <label for="harga_beli">Tanggal Masuk</label>
-                <input type="date" id="harga_beli" name="harga_beli" required />
-              </div>
-
-              <div class="form-group">
-                <label for="stok">Stok</label>
-                <input type="number" id="stok" name="stok" required />
-              </div>
-
-              <div class="form-group">
-                <label for="keterangan">Keterangan</label>
-                <input type="text" id="keterangan" name="keterangan" required />
-              </div>
-
-              <div class="btn-container">
-                <button type="submit" class="btn btn-save">Simpan</button>
-                <button
-                  type="button"
-                  class="btn btn-cancel"
-                  onclick="window.location.href='/admin-persediaan/data-barang-masuk.html'"
+          <div class="list">
+            <ul>
+              <li><a href="/">Dashboard</a></li>
+              <li>
+                <a href="/admin-persediaan/data-barang.html">Data Barang</a>
+              </li>
+              <li>
+                <a href="/admin-persediaan/data-barang-masuk.html"
+                  >Data Barang Masuk</a
                 >
-                  Batal
-                </button>
-              </div>
-            </form>
+              </li>
+              <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="konten">
+          <div class="isi-konten">
+            <div class="form-container">
+              <h2 class="tambah-title">Tambah Barang Masuk</h2>
+              <form id="tambahForm">
+                <div class="form-group">
+                  <label for="id_barang">Nama Barang</label>
+                  <select name="id_barang" id="id_barang"></select>
+                </div>
+
+                <div class="form-group">
+                  <label for="harga_beli">Tanggal Masuk</label>
+                  <input type="date" id="harga_beli" name="harga_beli" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="stok">Stok</label>
+                  <input type="number" id="stok" name="stok" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="keterangan">Keterangan</label>
+                  <input type="text" id="keterangan" name="keterangan" required />
+                </div>
+
+                <div class="btn-container">
+                  <button type="submit" class="btn btn-save">Simpan</button>
+                  <button
+                    type="button"
+                    class="btn btn-cancel"
+                    onclick="window.location.href='/admin-persediaan/data-barang-masuk.html'"
+                  >
+                    Batal
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <script>
-      // fech barang ke dropdown
-      async function getBarang() {
-        try {
-          const response = await fetch("/api/barang?all=true");
-          const data = await response.json();
-
-          const select = document.getElementById("id_barang");
-          select.innerHTML = '<option value="">Pilih Barang</option>';
-
-          data.result.forEach((barang) => {
-            const option = document.createElement("option");
-            option.value = barang.id_barang;
-            option.textContent = barang.nama_barang;
-            select.appendChild(option);
-          });
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Gagal mengambil data barang");
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", getBarang);
-
-      // Handle form submission
-      document
-        .getElementById("tambahForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-
-          const formData = {
-            id_barang: document.getElementById("id_barang").value,
-            jumlah: parseInt(document.getElementById("stok").value),
-            tanggal_masuk: document.getElementById("harga_beli").value,
-            keterangan: document.getElementById("keterangan").value,
-          };
-
-          if (formData.jumlah <= 0) {
-            alert("Stok tidak boleh kurang dari 0!");
-            return;
-          }
-
+      <!-- Toastify JS -->
+      <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+      <script>
+        // fech barang ke dropdown
+        async function getBarang() {
           try {
-            const response = await fetch("/api/barang-masuk", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(formData),
-            });
-
+            const response = await fetch("/api/barang?all=true");
             const data = await response.json();
 
-            if (response.ok) {
-              alert("Barang masuk berhasil ditambahkan");
-              window.location.href = "/admin-persediaan/data-barang-masuk.html";
-            } else {
-              alert(data.msg || "Gagal menambahkan barang masuk");
-            }
-          } catch (error) {
-            console.error("Error:", error);
-            alert("Terjadi kesalahan saat menambahkan barang masuk");
-          }
-        });
+            const select = document.getElementById("id_barang");
+            select.innerHTML = '<option value="">Pilih Barang</option>';
 
-      async function handleLogout(event) {
-        event.preventDefault();
-
-        if (confirm("Apakah Anda yakin ingin logout?")) {
-          try {
-            const response = await fetch("/api/logout", {
-              method: "GET",
-              credentials: "include",
+            data.result.forEach((barang) => {
+              const option = document.createElement("option");
+              option.value = barang.id_barang;
+              option.textContent = barang.nama_barang;
+              select.appendChild(option);
             });
-
-            if (response.ok) {
-              window.location.href = "/login";
-            } else {
-              alert("Gagal logout. Silakan coba lagi.");
-            }
           } catch (error) {
             console.error("Error:", error);
-            alert("Terjadi kesalahan saat logout");
+            showToast('Gagal Mengambil data barang', error)
+            // alert("Gagal mengambil data barang");
           }
         }
-      }
-    </script>
-  </body>
-</html>
+
+        document.addEventListener("DOMContentLoaded", getBarang);
+
+        // Handle form submission
+        document
+          .getElementById("tambahForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const formData = {
+              id_barang: document.getElementById("id_barang").value,
+              jumlah: parseInt(document.getElementById("stok").value),
+              tanggal_masuk: document.getElementById("harga_beli").value,
+              keterangan: document.getElementById("keterangan").value,
+            };
+
+            if (formData.jumlah <= 0) {
+              showToast("Stok tidak boleh kurang dari 0!");
+              return;
+            }
+
+            try {
+              const response = await fetch("/api/barang-masuk", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                showToast("Barang masuk berhasil ditambahkan");
+                // window.location.href = "/admin-persediaan/data-barang-masuk.html";
+                setTimeout(() => {
+                  window.location.href = '/admin-persediaan/data-barang-masuk.html';
+              }, 1500); 
+              } else {
+                showToast(data.msg || "Gagal menambahkan barang masuk");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              showToast("Terjadi kesalahan saat menambahkan barang masuk");
+            }
+          });
+
+        async function handleLogout(event) {
+          event.preventDefault();
+
+          if (confirm("Apakah Anda yakin ingin logout?")) {
+            try {
+              const response = await fetch("/api/logout", {
+                method: "GET",
+                credentials: "include",
+              });
+
+              if (response.ok) {
+                window.location.href = "/login";
+              } else {
+                showToast("Gagal logout. Silakan coba lagi.");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              showToast("Terjadi kesalahan saat logout");
+            }
+          }
+        }
+        //  Fungsi toast
+        function showToast(message, type = "success") {
+          Toastify({
+            text: message,
+            duration: 3000,
+            gravity: "top",
+            position: "right",
+            backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+            close: true,
+          }).showToast();
+        }
+      </script>
+    </body>
+  </html>

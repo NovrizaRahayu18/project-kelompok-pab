@@ -6,6 +6,8 @@
     <title>Zentro Store - Kasir</title>
     <link rel="stylesheet" href="/assets/style/kasir.css">
     <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
+    <!-- Toastify CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
     
@@ -62,13 +64,23 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
 const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR'
     }).format(number);
+}
+function showToast(message, type = "success") {
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top", 
+        position: "right",  
+        backgroundColor: type === "error" ? "#f44336" : "#4caf50",
+        stopOnFocus: true,
+    }).showToast();
 }
 
 const displayContainer = document.querySelector('.display');
@@ -127,14 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
 function addToKasir(barang) {
 
     if (barang.stok === 0) {
-        alert('Stok barang habis!');
+        showToast('Stok barang habis!', 'error');
         return;
     }
     
     const existingItem = selectedItems.find(item => item.id_barang === barang.id_barang);
     
     if (existingItem) {
-        alert('Item sudah ada di kasir');
+        showToast('Item sudah ada di kasir', 'error');
         return;
     }
 
@@ -193,13 +205,13 @@ function updateJumlah(index, value) {
     const jumlah = parseInt(value);
     
     if (jumlah > item.stok) {
-        alert('Jumlah melebihi stok yang tersedia');
+        showToast('Jumlah melebihi stok yang tersedia', 'error');
         document.querySelector('.kasir-table tbody').children[index].querySelector('input').value = item.jumlah;
         return;
     }
 
     if (jumlah < 1) {
-        alert('Jumlah tidak boleh kurang dari 1 !');
+        showToast('Jumlah tidak boleh kurang dari 1 !', 'error');
         document.querySelector('.kasir-table tbody').children[index].querySelector('input').value = item.jumlah;
         return;
     }
@@ -260,19 +272,19 @@ function hitungKembalian(uangBayar) {
 async function savePenjualan() {
 
     if (selectedItems.length === 0) {
-        alert('Pilih barang terlebih dahulu!');
+        showToast('Pilih barang terlebih dahulu!', 'error');
         return;
     }
 
     const uangBayar = document.getElementById('uang_bayar').value;
     if (!uangBayar) {
-        alert('Masukkan uang bayar terlebih dahulu!');
+        showToast('Masukkan uang bayar terlebih dahulu!', 'error');
         return;
     }
 
     const kembalian = uangBayar - total;
     if (kembalian < 0) {
-        alert('Uang bayar kurang!');
+        showToast('Uang bayar kurang!', 'error');
         return;
     }
 
@@ -302,8 +314,11 @@ async function savePenjualan() {
         const result = await response.json();
 
         if (response.ok) {
-            alert('Transaksi berhasil disimpan!');
-            window.location.reload();
+            showToast('Transaksi berhasil disimpan!');
+            setTimeout(() => {
+                window.location.reload()
+            }, 1500); 
+            // window.location.reload();
         } else {
             throw new Error(result.msg || 'Terjadi kesalahan');
         }

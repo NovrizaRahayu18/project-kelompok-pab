@@ -13,6 +13,23 @@ body {
     display: flex;
 }
 
+#logoutModal .btn {
+    margin: 10px 5px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#logoutModal .btn:first-child {
+    background-color: #f44336;
+    color: white;
+}
+
+#logoutModal .btn:last-child {
+    background-color: #ccc;
+}
+
 .navigasi {
     width: 250px;
     background-color: #66bdff;

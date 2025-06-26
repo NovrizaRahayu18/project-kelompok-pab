@@ -6,9 +6,8 @@
     <title>Zentro Store - Tambah Barang</title>
     <link rel="stylesheet" href="/assets/style/tambah-data-barang.css">
     <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
-    <style>
-        
-    </style>
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
     <div class="container">
@@ -70,9 +69,21 @@
             </div>
         </div>
     </div>
+<!-- Toastify JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <script>
-
+//  Fungsi toast
+function showToast(message, type = "success") {
+    Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+    close: true,
+    }).showToast();
+}
 // Preview gambar sebelum di upload
 document.getElementById('file').addEventListener('change', (event) => {
     const file = event.target.files[0];
@@ -100,19 +111,19 @@ document.getElementById('tambahForm').addEventListener('submit', async (e) => {
         formData.append('harga_beli', harga_beli);
         formData.append('harga_jual', harga_jual);
 
-        const fileInput = document.getElementById('file');
+        const fileInput = document.getElementById('file');  
         if (fileInput.files.length > 0) {
             formData.append('file', fileInput.files[0]);
         }
 
         // Validasi harga beli dan harga jual
         if (isNaN(harga_beli) || harga_beli <= 0) {
-            alert('Harga Beli tidak boleh kurang dari 0!');
+            showToast('Harga Beli tidak boleh kurang dari 0!');
             return;
         }
 
         if (isNaN(harga_jual) || harga_jual <= 0) {
-            alert('Harga Jual tidak boleh kurang dari 0!');
+            showToast('Harga Jual tidak boleh kurang dari 0!');
             return;
         }
 
@@ -122,15 +133,18 @@ document.getElementById('tambahForm').addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            alert('Barang berhasil ditambahkan');
-            window.location.href = '/admin-persediaan/data-barang.html';
+            showToast('Barang berhasil ditambahkan');
+            setTimeout(() => {
+                window.location.href = '/admin-persediaan/data-barang.html';
+            }, 1500); 
+            // window.location.href = '/admin-persediaan/data-barang.html';
         } else {
             const error = await response.json();
-            alert(error.msg || 'Gagal menambahkan barang');
+            showToast(error.msg || 'Gagal menambahkan barang');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat menambahkan barang');
+        showToast('Terjadi kesalahan saat menambahkan barang');
     }
 });
 
@@ -148,11 +162,11 @@ async function handleLogout(event) {
             if (response.ok) {
                 window.location.href = '/login';
             } else {
-                alert('Gagal logout. Silakan coba lagi.');
+                showToast('Gagal logout. Silakan coba lagi.');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('Terjadi kesalahan saat logout');
+            showToast('Terjadi kesalahan saat logout');
         }
     }
 }

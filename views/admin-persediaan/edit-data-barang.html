@@ -6,9 +6,9 @@
     <title>Zentro Store - Data Barang</title>
     <link rel="stylesheet" href="/assets/style/edit-data-barang.css">
     <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
-    <style>
-        
-    </style>
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+
 </head>
 <body>
     
@@ -72,6 +72,9 @@
         </div>
     </div>
 </div>
+
+<!-- Toastify JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -116,12 +119,14 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
 
         // Validasi harga_beli dan harga_jual
         if (isNaN(harga_beli) || harga_beli <= 0) {
-            alert('Harga Beli tidak boleh kurang dari 0!');
+            showToast('Harga Beli tidak boleh kurang dari 0!', 'error');
             return;
         }
 
+
         if (isNaN(harga_jual) || harga_jual <= 0) {
-            alert('Harga Jual tidak boleh kurang dari 0!');
+            showToast('Harga Jual tidak boleh kurang dari 0!', error)
+            // alert('Harga Jual tidak boleh kurang dari 0!');
             return;
         }
 
@@ -142,18 +147,32 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
         });
 
         if (response.ok) {
-            alert('Barang berhasil diupdate');
-            window.location.href = '/admin-persediaan/data-barang.html';
+            showToast('Barang berhasil diupdate', 'success');
+            setTimeout(() => {
+                window.location.href = '/admin-persediaan/data-barang.html';
+            }, 1500); 
         } else {
             const error = await response.json();
-            alert(error.msg || 'Gagal mengupdate barang');
+            showToast(error.msg || 'Gagal mengupdate barang', 'error');
         }
+
     } catch (error) {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat mengupdate barang');
+        showToast('Terjadi kesalahan saat mengupdate barang', error )
+        // alert('Terjadi kesalahan saat mengupdate barang');
     }
 });
 
+function showToast(message, type = "success") {
+    Toastify({
+        text: message,
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+        close: true,
+    }).showToast();
+}
 
 
 document.addEventListener('DOMContentLoaded', loadBarangData);

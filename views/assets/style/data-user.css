@@ -20,6 +20,28 @@ body {
     height: 100%;
     overflow-y: auto;
 }
+.modal-content {
+    display: none;
+    position: fixed;
+    z-index: 99;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 300px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.modal-content.active {
+    display: block;
+}
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
 
 .judul {
     width: 100%;
@@ -126,14 +148,36 @@ td:first-child {
     text-align: center;
 }
 
-
+.modal-content {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 300px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  .modal-content.active {
+    display: block;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  
 .btn {
     padding: 5px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    color: white;
+    color: rgb(0, 0, 0);
     margin: 0 5px;
 }
 

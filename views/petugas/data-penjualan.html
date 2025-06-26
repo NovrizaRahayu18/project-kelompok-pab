@@ -70,6 +70,7 @@
         </div>
     </div>
 </div>
+
 <script>
 document.getElementById('printButton').addEventListener('click', () => {
         window.print();
@@ -193,11 +194,36 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `/petugas/data-detail-penjualan.html?id=${id}`;
     };
 
+    function showConfirm(message, callback) {
+    const modal = document.createElement('div');
+    modal.id = 'customConfirm';
+    modal.innerHTML = `
+        <div class="modal-box">
+            <p>${message}</p>
+            <button id="confirmYes">Ya</button>
+            <button id="confirmNo">Batal</button>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('confirmYes').onclick = () => {
+        document.body.removeChild(modal);
+        callback(true);
+    };
+
+    document.getElementById('confirmNo').onclick = () => {
+        document.body.removeChild(modal);
+        callback(false);
+    };
+}
 
 async function handleLogout(event) {
     event.preventDefault();
-    
-    if (confirm("Apakah Anda yakin ingin logout?")) {
+
+    showConfirm("Apakah Anda yakin ingin logout?", async (confirmed) => {
+        if (!confirmed) return;
+
         try {
             const response = await fetch('/api/logout', {
                 method: 'GET',
@@ -213,8 +239,9 @@ async function handleLogout(event) {
             console.error('Error:', error);
             alert('Terjadi kesalahan saat logout');
         }
-    }
+    });
 }
+
 </script>
 
 </body>

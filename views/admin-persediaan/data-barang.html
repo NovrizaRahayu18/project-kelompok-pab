@@ -1,205 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentro Store - Data Barang</title>
-    <link rel="stylesheet" href="/assets/style/data-barang.css">
-    <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zentro Store - Data Barang</title>
+  <link rel="stylesheet" href="/assets/style/data-barang.css" />
+  <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg" />
+
+  <!-- Toastify CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
 </head>
 <body>
-    
+
 <div class="container">
-
-    <div class="navigasi">
-        <div class="judul">
-            <div class="gambar">
-                <img src="/assets/images/logo.jpg" alt="">
-            </div>
-            <h2>Zentro Store</h2>
-        </div>
-        
-        <div class="list">
-            <ul>
-                <li><a href="/">Dashboard</a></li>
-                <li><a href="/admin-persediaan/data-barang.html">Data Barang</a></li>
-                <li><a href="/admin-persediaan/data-barang-masuk.html">Data Barang Masuk</a></li>
-                <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
-            </ul>
-        </div>
+  <div class="navigasi">
+    <div class="judul">
+      <div class="gambar">
+        <img src="/assets/images/logo.jpg" alt="" />
+      </div>
+      <h2>Zentro Store</h2>
     </div>
-
-    <div class="konten">
-        <div class="isi-konten">
-            <div class="con-button">
-                <button class="btn tambah" onclick="window.location.href='/admin-persediaan/tambah-barang.html'"> + Tambah</button>
-                <input type="text" id="search-bar" placeholder="Cari Barang...">
-            </div>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>ID Barang</th>
-                        <th>Nama Barang</th>
-                        <th>Gambar</th>
-                        <th>Harga Beli</th>
-                        <th>Harga Jual</th>
-                        <th>Stok</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="data_barang">
-                    
-                </tbody>
-            </table>
-
-            <div id="pagination" class="pagination">
-            <!-- Pagination -->
-            </div>
-
-        </div>
-    </div>
-</div>
-<script>
-
     
+    <div class="list">
+      <ul>
+        <li><a href="/">Dashboard</a></li>
+        <li><a href="/admin-persediaan/data-barang.html">Data Barang</a></li>
+        <li><a href="/admin-persediaan/data-barang-masuk.html">Data Barang Masuk</a></li>
+        <li><a href="#" onclick="handleLogout(event)">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="konten">
+    <div class="isi-konten">
+      <div class="con-button">
+        <button class="btn tambah" onclick="window.location.href='/admin-persediaan/tambah-barang.html'">+ Tambah</button>
+        <input type="text" id="search-bar" placeholder="Cari Barang..." />
+      </div>
+      <table border="1">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>ID Barang</th>
+            <th>Nama Barang</th>
+            <th>Gambar</th>
+            <th>Harga Beli</th>
+            <th>Harga Jual</th>
+            <th>Stok</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="data_barang"></tbody>
+      </table>
+
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <p id="confirmMessage">Apakah Anda yakin ingin menghapus barang ini?</p>
+    <div class="modal-actions">
+      <button id="confirmYes" class="btn delete">Ya</button>
+      <button id="confirmNo" class="btn cancel">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toastify JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script>
+let currentPage = 0;
+let totalPages = 0;
+
 const formatRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR'
-    }).format(number);
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  }).format(number);
+};
+
+function showToast(message, type = "success") {
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+    close: true,
+  }).showToast();
 }
 
-document.getElementById('search-bar').addEventListener('input', function() {
-    // Reset ke halaman pertama saat melakukan pencarian
-    currentPage = 0;
-    loadDataBarang();
+document.getElementById("search-bar").addEventListener("input", function () {
+  currentPage = 0;
+  loadDataBarang();
 });
 
 const loadDataBarang = async (page = 0) => {
-    try {
-        const searchQuery = document.getElementById('search-bar').value;
-        const response = await fetch(`/api/barang?page=${page}&limit=5&search=${searchQuery}`);
-        const data = await response.json();
-        
-        totalPages = data.totalPages;
-        currentPage = data.page;
-        
-        const tableBody = document.getElementById('data_barang');
-        tableBody.innerHTML = ''; 
-        
-        if (data.result.length === 0) {
-            // Tampilkan pesan jika tidak ada data yang ditemukan
-            const emptyRow = document.createElement('tr');
-            emptyRow.innerHTML = `<td colspan="8" style="text-align: center; font-style: italic;">Tidak ada barang yang ditemukan</td>`;
-            tableBody.appendChild(emptyRow);
-        } else {
-            data.result.forEach((barang, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${(currentPage * 5) + index + 1}</td>
-                    <td class="tengah">${barang.id_barang}</td>
-                    <td>${barang.nama_barang}</td>
-                    <td class="tengah">
-                        <img src="${barang.url}" alt="${barang.nama_barang}" class="gambar-barang">
-                    </td>   
-                    <td>${formatRupiah(barang.harga_beli)}</td>
-                    <td>${formatRupiah(barang.harga_jual)}</td>
-                    <td class="tengah">${barang.stok}</td>
-                    <td>
-                        <button class="btn edit" onclick="editBarang(${barang.id_barang})">Edit</button>
-                        <button class="btn delete" onclick="deleteBarang(${barang.id_barang})">Hapus</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-        
-        updatePagination();
-    } catch (error) {
-        console.error('Error:', error);
+  try {
+    const searchQuery = document.getElementById("search-bar").value;
+    const response = await fetch(`/api/barang?page=${page}&limit=5&search=${searchQuery}`);
+    const data = await response.json();
+
+    totalPages = data.totalPages;
+    currentPage = data.page;
+
+    const tableBody = document.getElementById("data_barang");
+    tableBody.innerHTML = "";
+
+    if (data.result.length === 0) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.innerHTML = `<td colspan="8" style="text-align: center; font-style: italic;">Tidak ada barang yang ditemukan</td>`;
+      tableBody.appendChild(emptyRow);
+    } else {
+      data.result.forEach((barang, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${(currentPage * 5) + index + 1}</td>
+          <td class="tengah">${barang.id_barang}</td>
+          <td>${barang.nama_barang}</td>
+          <td class="tengah"><img src="${barang.url}" alt="${barang.nama_barang}" class="gambar-barang" /></td>
+          <td>${formatRupiah(barang.harga_beli)}</td>
+          <td>${formatRupiah(barang.harga_jual)}</td>
+          <td class="tengah">${barang.stok}</td>
+          <td>
+            <button class="btn edit" onclick="editBarang(${barang.id_barang})">Edit</button>
+            <button class="btn delete" onclick="deleteBarang(${barang.id_barang})">Hapus</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
     }
+
+    updatePagination();
+  } catch (error) {
+    console.error("Error:", error);
+    showToast("Gagal memuat data barang", "error");
+  }
 };
 
-// Fungsi untuk update pagination controls
 const updatePagination = () => {
-    const paginationElement = document.getElementById('pagination');
-    
-    let paginationHTML = `
-        <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>Previous</button>
-        <span>Page ${currentPage + 1} of ${totalPages}</span>
-        <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? 'disabled' : ''}>Next</button>
-    `;
-    
-    paginationElement.innerHTML = paginationHTML;
+  const paginationElement = document.getElementById("pagination");
+  let paginationHTML = `
+    <button onclick="changePage(${currentPage - 1})" ${currentPage === 0 ? "disabled" : ""}>Previous</button>
+    <span>Page ${currentPage + 1} of ${totalPages}</span>
+    <button onclick="changePage(${currentPage + 1})" ${currentPage >= totalPages - 1 ? "disabled" : ""}>Next</button>
+  `;
+  paginationElement.innerHTML = paginationHTML;
 };
 
-// Fungsi untuk ganti halaman
 const changePage = (page) => {
-    if (page < 0 || page >= totalPages) return;
-    currentPage = page;
-    loadDataBarang(page);
+  if (page < 0 || page >= totalPages) return;
+  currentPage = page;
+  loadDataBarang(page);
 };
 
-const deleteBarang = async (id) => {
-    if (confirm('Apakah Anda yakin ingin menghapus barang ini?')) {
-        try {
+let barangIdToDelete = null;
 
-            const cekPenjualan = await fetch(`/api/barang/check-penjualan/${id}`);
-            const penjualanData = await cekPenjualan.json();
+function showDeleteConfirm(id) {
+  barangIdToDelete = id;
+  document.getElementById("confirmModal").style.display = "flex";
+}
 
-            if (penjualanData.inSales) {
-                alert('Barang tidak dapat dihapus karena digunakan dalam transaksi penjualan.');
-                return;
-            }
+document.getElementById("confirmYes").addEventListener("click", async () => {
+  if (!barangIdToDelete) return;
 
-            const response = await fetch(`/api/barang/${id}`, {
-                method: 'DELETE'
-            });
-            
-            if (response.ok) {
-                alert('Barang berhasil dihapus');
-                loadDataBarang(); 
-            } else {
-                alert('Gagal menghapus barang');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat menghapus barang');
-        }
+  try {
+    const cekPenjualan = await fetch(`/api/barang/check-penjualan/${barangIdToDelete}`);
+    const penjualanData = await cekPenjualan.json();
+
+    if (penjualanData.inSales) {
+      showToast("Barang tidak dapat dihapus karena digunakan dalam transaksi penjualan.", "error");
+      closeModal();
+      return;
     }
+
+    const response = await fetch(`/api/barang/${barangIdToDelete}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      showToast("Barang berhasil dihapus", "success");
+      loadDataBarang();
+    } else {
+      showToast("Gagal menghapus barang", "error");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    showToast("Terjadi kesalahan saat menghapus barang", "error");
+  }
+
+  closeModal();
+});
+
+document.getElementById("confirmNo").addEventListener("click", closeModal);
+
+function closeModal() {
+  document.getElementById("confirmModal").style.display = "none";
+  barangIdToDelete = null;
+}
+
+// Ubah pemanggilan tombol hapus:
+const deleteBarang = (id) => {
+  showDeleteConfirm(id);
 };
 
 const editBarang = (id) => {
-    window.location.href = `/admin-persediaan/edit-data-barang.html?id=${id}`;
+  window.location.href = `/admin-persediaan/edit-data-barang.html?id=${id}`;
 };
 
-document.querySelector('.btn.tambah').addEventListener('click', () => {
-    window.location.href = '/admin-persediaan/tambah-data-barang.html';
+document.querySelector(".btn.tambah").addEventListener("click", () => {
+  window.location.href = "/admin-persediaan/tambah-data-barang.html";
 });
 
-document.addEventListener('DOMContentLoaded', loadDataBarang);
+document.addEventListener("DOMContentLoaded", loadDataBarang);
 
 async function handleLogout(event) {
-    event.preventDefault();
-    
-    if (confirm("Apakah Anda yakin ingin logout?")) {
-        try {
-            const response = await fetch('/api/logout', {
-                method: 'GET',
-                credentials: 'include'
-            });
+  event.preventDefault();
 
-            if (response.ok) {
-                window.location.href = '/login';
-            } else {
-                alert('Gagal logout. Silakan coba lagi.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan saat logout');
-        }
+  if (confirm("Apakah Anda yakin ingin logout?")) {
+    try {
+      const response = await fetch("/api/logout", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        window.location.href = "/login";
+      } else {
+        showToast("Gagal logout. Silakan coba lagi.", "error");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      showToast("Terjadi kesalahan saat logout", "error");
     }
+  }
 }
 </script>
 
