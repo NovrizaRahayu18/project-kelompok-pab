@@ -47,7 +47,7 @@
             <th>Harga Beli</th>
             <th>Harga Jual</th>
             <th>Stok</th>
-            <th>Aksi</th>
+            <th class="tengah">Aksi</th>
           </tr>
         </thead>
         <tbody id="data_barang"></tbody>
@@ -125,7 +125,7 @@ const loadDataBarang = async (page = 0) => {
           <td>${formatRupiah(barang.harga_beli)}</td>
           <td>${formatRupiah(barang.harga_jual)}</td>
           <td class="tengah">${barang.stok}</td>
-          <td>
+          <td class="tengah">
             <button class="btn edit" onclick="editBarang(${barang.id_barang})">Edit</button>
             <button class="btn delete" onclick="deleteBarang(${barang.id_barang})">Hapus</button>
           </td>
