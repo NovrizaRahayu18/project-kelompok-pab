@@ -44,10 +44,10 @@
                         <th>No</th>
                         <th>ID User</th>
                         <th>Username</th>
-                        <th>Password</th>
+                        <!-- <th>Password</th> -->
                         <th>Role</th>
                         <th>Nama Lengkap</th>
-                        <th>Aksi</th>
+                        <th class="tengah">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="data_user">
@@ -86,7 +86,7 @@
 function showToast(message, type = "success") {
   Toastify({
     text: message,
-    duration: 3000,
+    duration: 500,
     gravity: "top",
     position: "right",
     close: true,
@@ -126,11 +126,11 @@ const loadDataUser = async (page = 0) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${(currentPage * 9) + index + 1}</td>
-                <td class="tengah">${user.id_user}</td>
+                <td>${user.id_user}</td>
                 <td>${user.username}</td>
-                <td>${user.password.length > 6 ? user.password.slice(0, Math.ceil(user.password.length / 2)) + '...' : user.password}</td>
+                <!--  <td>${user.password.length > 6 ? user.password.slice(0, Math.ceil(user.password.length / 2)) + '...' : user.password}</td> -->
                 <td>${user.role}</td>
-                <td class="tengah">${user.nama_lengkap}</td>
+                <td>${user.nama_lengkap}</td>
                 <td>
                     <button class="btn edit" onclick="editUser(${user.id_user})">Edit</button>
                     <button class="btn delete" onclick="deleteUser(${user.id_user})">Hapus</button>

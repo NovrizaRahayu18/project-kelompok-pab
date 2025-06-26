@@ -130,7 +130,7 @@ tr:hover {
 
 .con-button {
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
 }
 
 .tambah {
@@ -146,6 +146,13 @@ tr:hover {
 
 .delete {
     background-color: #f44336; 
+    width: 60px;
+
+}
+
+.cancel {
+    background-color: #808080;
+    width: 60px;
 }
 
 .mundur {

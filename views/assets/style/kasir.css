@@ -135,6 +135,7 @@ a:hover {
     font-size: 25px;
     font-weight: bold;
     width: 45%;
+    text-align: center;
 }
 
 .card {
