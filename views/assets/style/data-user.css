@@ -252,7 +252,9 @@ td:first-child {
     margin: 0 10px;
     font-weight: bold;
 }
-
+.toastify {
+    z-index: 9999;
+  }
 #search {
     width: 100%;
     max-width: 400px;
