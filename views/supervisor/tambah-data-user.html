@@ -68,15 +68,18 @@
   <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script>
     function showToast(message, type = "success") {
-      Toastify({
-        text: message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
-        close: true,
-      }).showToast();
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
+    close: true,
+    style: {
+      zIndex: 9999,
     }
+  }).showToast();
+}
 
     document.getElementById("tambahForm").addEventListener("submit", async (e) => {
       e.preventDefault();

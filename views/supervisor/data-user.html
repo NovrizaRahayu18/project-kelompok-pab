@@ -6,9 +6,8 @@
     <title>Zentro Store - Data User</title>
     <link rel="stylesheet" href="/assets/style/data-user.css">
     <link rel="icon" href="/assets/images/logo.jpg" type="image/jpg">
-    <style>
-        
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 </head>
 <body>
     
@@ -60,13 +59,13 @@
             <!-- Pagination controls akan dirender oleh JavaScript -->
             </div>
             <!-- Modal Konfirmasi Hapus -->
-<div class="modal-content" id="deleteModal">
-    <p id="confirmMessage">Apakah Anda yakin ingin menghapus User ini?</p>
-    <div class="modal-actions">
-      <button id="confirmYes" class="btn delete">Ya</button>
-      <button id="confirmNo" class="btn cancel">Batal</button>
-    </div>
-  </div>
+            <div class="modal-content" id="deleteModal">
+                <p id="confirmMessage">Apakah Anda yakin ingin menghapus User ini?</p>
+                <div class="modal-actions">
+                <button id="confirmYes" class="btn delete">Ya</button>
+                <button id="confirmNo" class="btn cancel">Batal</button>
+                </div>
+            </div>
   
   <!-- Modal Konfirmasi Logout -->
   <div class="modal-content" id="logoutModal">
@@ -85,15 +84,17 @@
 </div>
 <script>
 function showToast(message, type = "success") {
-    Toastify({
-        text: message,
-        duration: 3000,
-        gravity: "top",
-        position: "right",
-        backgroundColor: type === "success" ? "#4CAF50" : "#f44336",
-        close: true,
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "right",
+    close: true,
+    backgroundColor: type === "success" ? "#4CAF50" : "#f44336"
     }).showToast();
 }
+
+
 
 let currentPage = 0;
 let totalPages = 0;
@@ -219,7 +220,7 @@ document.getElementById("logoutYes").addEventListener("click", async () => {
             credentials: 'include'
         });
         if (response.ok) {
-            showToast("Logout berhasil", "success");
+            // showToast("Logout berhasil", "success");
             setTimeout(() => {
                 window.location.href = '/login';
             }, 1000);
